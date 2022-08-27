@@ -9,7 +9,7 @@
       }
     ],
    "action": {
-      "default_icon": "images/off.png",
+      "default_icon": "images/on.png",
       "default_title": "Toggle AutoInvert"
    },
    "description": "Invert websites colors enabling everywhere the dark mode to reduce strain on eyes and improve readability at night!",
@@ -21,7 +21,7 @@
    "name": "AutoInvert",
    "permissions": [ "activeTab"],
    "host_permissions": ["<all_urls>"],
-   "version": "0.3.1",
+   "version": "0.3.2",
    "author": "cekkr",
    "homepage_url": "https://github.com/cekkr/autoinvert-chrome"
 }

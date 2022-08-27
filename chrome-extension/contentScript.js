@@ -12,15 +12,15 @@ chrome.runtime.onMessage.addListener(
       if (request.message === 'invert!') {
 
         var style = document.getElementById(inverterStyleId);
-        if (style == null) {
+        if (!style) {
             style = document.createElement("style");
             style.type = "text/css";
             style.id = inverterStyleId;
-            style.innerHTML = invertFreeStyle(true);
+            style.innerHTML = invertFreeStyle(request.toggle);
             document.head.appendChild(style);
         }
-
-        document.getElementById(inverterStyleId).innerHTML = invertFreeStyle(request.toggle);
+        else 
+          style.innerHTML = invertFreeStyle(request.toggle);
       }
 
       //sendResponse(true); // everythin fine broh
