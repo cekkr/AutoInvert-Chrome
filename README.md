@@ -9,13 +9,17 @@ AutoInvert inverts pages colors (but not their images!) on Google Chrome to **re
 * Current version: 0.3.2 (8 Aug 22) *
 
 ## How to use it: 
-*Click here when you prefer:*
-![Just use it](https://i.ibb.co/zhHW4kw/howuseit.png)
+<table>
+  <tr>
+    <td><i><b>Click here when and how many times you prefer:</b></i></td>
+    <td vertical-align="middle"><img src="https://i.ibb.co/zhHW4kw/howuseit.png"/></td>
+  </tr>
+  <tr><td colspan="2" align="center"><h3><i>Discover how your vision changes</i></h3></td></tr>
+</table>
 
-
-*Et voilà:*
 ![AutoInvert Toggle Screenshot](https://i.ibb.co/R3YJPn0/wikipedia-chrome-store-screenshot.png)
 
-##### Developed by Riccardo Cecchini (cekkr) 
-@ rcecchini.ds at gmail dot com
-*Forked from Invert! extension*
+##### Developed with 🧡 by Riccardo Cecchini (cekkr) 
+<sup>📧 rcecchini.ds at gmail dot com</sup>
+
+*Forked with gratitude from Invert! extension*
