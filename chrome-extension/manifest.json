@@ -12,7 +12,6 @@
       "default_icon": "images/off.png",
       "default_title": "Toggle AutoInvert"
    },
-   "default_locale": "en",
    "description": "Invert websites colors enabling everywhere the dark mode to reduce strain on eyes and improve readability at night!",
    "icons": {
       "128": "images/icon128.png",

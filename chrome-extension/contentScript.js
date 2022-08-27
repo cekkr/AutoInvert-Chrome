@@ -13,20 +13,17 @@ chrome.runtime.onMessage.addListener(
       }
 
       if (request.message === 'invert!') {
-        if(request.toggle){
-            if (document.getElementById(inverterStyleId) == null) {
-                var style = document.createElement("style");
-                style.type = "text/css";
-                style.id = inverterStyleId;
-                style.innerHTML = invertFreeStyle(true);
-                document.head.appendChild(style);
-            } else {
-                document.getElementById(inverterStyleId).innerHTML = invertFreeStyle(true);
-            }
+
+        var style = document.getElementById(inverterStyleId);
+        if (style == null) {
+            style = document.createElement("style");
+            style.type = "text/css";
+            style.id = inverterStyleId;
+            style.innerHTML = invertFreeStyle(true);
+            document.head.appendChild(style);
         }
-        else {
-            document.getElementById(inverterStyleId).innerHTML = invertFreeStyle(false);
-        }
+
+        document.getElementById(inverterStyleId).innerHTML = invertFreeStyle(request.toggle);
       }
 
       sendResponse(true); // everythin fine broh
