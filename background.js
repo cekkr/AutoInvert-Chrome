@@ -1,12 +1,47 @@
-var toggle = false;
+var toggles = {};
 
-chrome.browserAction.onClicked.addListener(function(tab) {
-	toggle = !toggle;
-	if (toggle) {
-		chrome.browserAction.setIcon({path: "images/on.png", tabId:tab.id});
-		chrome.tabs.executeScript(null, {file: "on.js"});
+function getDomain(url){
+	return url.split('//')[1].split('/')[0]; // pls don't kill me
+}
+
+var settingRef = 'blanco';
+
+function execToggle(tab){
+	settingRef = tab.url;
+
+	chrome.tabs.sendMessage(tab.id, {
+		message: 'invert!',
+		toggle: toggles[settingRef],
+	})
+
+	if (toggles[settingRef]) {
+		chrome.action.setIcon({path: "images/on.png", tabId:tab.id});
 	} else {
-		chrome.browserAction.setIcon({path: "images/off.png", tabId:tab.id});
-		chrome.tabs.executeScript(null, {file: "off.js"});
+		chrome.action.setIcon({path: "images/off.png", tabId:tab.id});
 	}
+}
+
+chrome.action.onClicked.addListener(function(tab) {
+	toggles[settingRef] = !(toggles[settingRef] || false);
+	execToggle(tab);
 });
+
+chrome.tabs.onUpdated.addListener(function
+	(tabId, changeInfo, tab) {
+		execToggle(tab);
+	}
+);
+
+chrome.tabs.onActivated.addListener(function
+	(tabId, changeInfo, tab) {
+		execToggle(tab);
+	}
+);
+
+// Get current tab
+/*chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+	if(tabs.length==1){
+		console.log('query something');
+    	execToggle(tabs[0]);
+	}
+});*/

@@ -1,1 +1,0 @@
-document.getElementById("invertRunning").innerHTML = "html {-webkit-filter: invert(0%)}";

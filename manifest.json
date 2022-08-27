@@ -1,22 +1,26 @@
 {
    "background": {
-      "persistent": false,
-      "scripts": [ "background.js" ]
+      "service_worker": "background.js" 
    },
-   "browser_action": {
+   "content_scripts": [
+      {
+        "matches": ["*://*/*"],
+        "js": ["contentScript.js"]
+      }
+    ],
+   "action": {
       "default_icon": "images/off.png",
-      "default_title": "Toggle Invert!"
+      "default_title": "Toggle AutoInvert"
    },
-   "description": "Invert page colors to reduce strain on eyes and improve readability at night.",
+   "description": "Invert page colors to reduce strain on eyes and improve readability at night, keeping the setting for the domains where it was activated. Forked from Invert! extension",
    "icons": {
       "128": "images/icon128.png",
-      "16": "images/icon16.png",
       "48": "images/icon48.png"
    },
-   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgCJuHRqbfpDgyhu/BR5jeG42L35BaFbx2WfDEnjoajb7Dyhe4MMQETkOMo114P1rbZk+LaOABcdF26/GuKb1+pXSd8iBByysOqrNuxsNjJL+UQVKqcYvEU+OURxwC3j+RypalwmLLaddsQ+yiVqrFs4XObRMwEzhcVjeulHJ4CdX3QJyqF9sXKiREqJ51zk50DBU8/+rExePcpnLb2+usWWcVs0bos1708eFCAT4BxhyM7CrJ9OCfShHlxy84qGNHgGR+mRQCTSiVUrbE4BaFwrYnyLzyhj0oPYEM8KIykTOMTDWhsZMf2TGLAnmsOGE3fr9eR1i8CjLU9VaqEgUEwIDAQAB",
-   "manifest_version": 2,
-   "name": "Invert!",
-   "permissions": [ "activeTab" ],
+   "manifest_version": 3,
+   "name": "AutoInvert",
+   "permissions": [ "activeTab"],
+   "host_permissions": ["<all_urls>"],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "0.1"
+   "version": "0.2.31"
 }
