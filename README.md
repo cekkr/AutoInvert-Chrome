@@ -9,7 +9,7 @@ AutoInvert inverts pages colors (but not their images!) on Google Chrome to **re
 ***Current version: 0.3.2 (8 Aug 22)***
 
 ## How to install it
-Download the [repository archive](https://github.com/cekkr/autoinvert-chrome/archive/refs/heads/main.zip) and then extract it, and move it in a secure directory different than Downloads. 
+[Download the repository zip archive](https://github.com/cekkr/autoinvert-chrome/archive/refs/heads/main.zip) and then extract it, and move it in a secure directory different than Downloads. 
 Then, in Chrome, click on the <b>puzzle icon</b> at top-right of the window, at the right of the option buttons and before the other extensions' icons. 
 It will appears a PopUp with the list of the enabled extensions, and at the bottom click on "Manage Extensions".
 This will open a new tab, where at the top-left you can see the button "Load unpacked". It will appear a window for selecting the folder containing the extension, and this one it's the <b>AutoInvert</b> contained in the extracted archive. 
