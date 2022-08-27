@@ -1,9 +1,6 @@
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-      // listen for messages sent from background.js
-
-      console.log("received message", request);
-
+      // listen for messages sent from background.js    
       const inverterStyleId = "extAutoInverterRunning";
 
       function invertFreeStyle(invert){
@@ -26,5 +23,5 @@ chrome.runtime.onMessage.addListener(
         document.getElementById(inverterStyleId).innerHTML = invertFreeStyle(request.toggle);
       }
 
-      sendResponse(true); // everythin fine broh
+      //sendResponse(true); // everythin fine broh
   });
