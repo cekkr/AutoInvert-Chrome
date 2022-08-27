@@ -1,2 +1,4 @@
 toThink:
 - JS injection for background-image exception: https://css-tricks.com/apply-a-filter-to-a-background-image/ => bad idea for normal backgrounds
+
+TODO: publish it https://developer.chrome.com/docs/webstore/publish/
