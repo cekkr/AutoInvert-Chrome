@@ -3,6 +3,6 @@
 
 Invert pages colors (but not their images!) on Google Chrome to reduce strain on eyes and improve readability at night, keeping the setting for the domains where it was activated. 
 
-![AutoInvert](https://i.ibb.co/YQwbQgh/big-logo-cover-freestyle.png)
+![AutoInvert](https://i.ibb.co/71fNJJT/big-logo-cover-freestyle.png)
 
 *Forked from Invert! extension*
