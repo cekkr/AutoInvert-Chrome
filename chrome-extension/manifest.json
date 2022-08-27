@@ -12,7 +12,8 @@
       "default_icon": "images/off.png",
       "default_title": "Toggle AutoInvert"
    },
-   "description": "Invert page colors to reduce strain on eyes and improve readability at night, keeping the setting for the domains where it was activated. Forked from Invert! extension",
+   "default_locale": "en",
+   "description": "Invert websites colors enabling everywhere the dark mode to reduce strain on eyes and improve readability at night!",
    "icons": {
       "128": "images/icon128.png",
       "48": "images/icon48.png"
@@ -21,6 +22,7 @@
    "name": "AutoInvert",
    "permissions": [ "activeTab"],
    "host_permissions": ["<all_urls>"],
-   "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "0.2.36"
+   "version": "0.3.0",
+   "author": "cekkr",
+   "homepage_url": "https://github.com/cekkr/autoinvert-chrome"
 }
