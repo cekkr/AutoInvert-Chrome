@@ -1,6 +1,5 @@
 $currentfolder = Get-Location
 
-# Remove Thumbs.db
+# Remove Thumbs.db and desktop.ini
 Get-ChildItem -Path $currentfolder -File -Include Thumbs.db -Recurse | Remove-Item -Force -Verbose
-
-Remove-Item -Force -Verbose desktop.ini -ErrorAction Ignore
+Get-ChildItem -Path $currentfolder -File -Include desktop.ini -Recurse | Remove-Item -Force -Verbose

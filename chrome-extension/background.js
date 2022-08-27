@@ -7,7 +7,7 @@ function getDomain(url){
 var settingRef = 'blanco';
 
 function execToggle(tab){
-	settingRef = tab.url;
+	settingRef = getDomain(tab.url);
 
 	chrome.tabs.sendMessage(tab.id, {
 		message: 'invert!',
@@ -37,11 +37,3 @@ chrome.tabs.onActivated.addListener(function
 		execToggle(tab);
 	}
 );
-
-// Get current tab
-/*chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-	if(tabs.length==1){
-		console.log('query something');
-    	execToggle(tabs[0]);
-	}
-});*/
