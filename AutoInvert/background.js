@@ -50,6 +50,6 @@ chrome.tabs.onUpdated.addListener(
 chrome.tabs.onActivated.addListener(
 	function (res) {
 		console.log("tab activated", res);
-		execToggle(res.tabId, tabs[res.tabId].url);
+		execToggle(res.tabId, (tabs[res.tabId]||{}).url);
 	}
 );
