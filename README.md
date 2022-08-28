@@ -7,7 +7,7 @@ AutoInvert inverts pages colors (but not their images or videos!) on Google Chro
 
 ### Get the dark mode (or light mode) on unsupported websites, activate and deactive with an unique button!
 
-<sub><i>Current version: 0.3.4 (28 Aug 22)</i><sub>
+<sub><i>Current version: 0.3.5 (28 Aug 22)</i><sub>
 
 <hr>
 
