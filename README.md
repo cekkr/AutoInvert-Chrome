@@ -7,7 +7,7 @@ AutoInvert inverts pages colors (but not their images or videos!) on Google Chro
 
 ### Get the dark mode (or light mode) on unsupported websites, activate and deactive with an unique button!
 
-***Current version: 0.3.3 (28 Aug 22)***
+***Current version: 0.3.4 (28 Aug 22)***
 
 ## How to install it manually <i>(outside the store)</i>
 In this moment the extensions is in revision phase on the Chrome Store, but you could install manually it as-is on GitHub. 

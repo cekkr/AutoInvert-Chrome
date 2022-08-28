@@ -3,18 +3,30 @@ chrome.runtime.onMessage.addListener(
       // listen for messages sent from background.js    
       const inverterStyleId = "extAutoInverterRunning";
 
-      function invertFreeStyle(invert, exclude){
-        exclude = exclude || []; // list of additional tags to exclude
+      function getFilters(bool){
 
+      }
+
+      function invertFreeStyle(invert, exclude){
+        // Tags to exclude from color inverting
+        exclude = exclude || []; 
+
+        exclude.push('img');
         exclude.push('video');
 
-        // think about these:
+        // think about these tags:
         //exclude.push('svg');
         //exclude.push('canvas');
 
-        let percentage = invert ? 100 : 0;
+        // Calculate filters
+        let filters = [];
 
-        return "html {-webkit-filter: invert("+percentage+"%)} img "+ (exclude.length > 0 ? ', ' + exclude.join(', ') : '')+" {-webkit-filter: invert("+percentage+"%)}";
+        filters.push("invert("+(invert?100:0)+"%)");
+        filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
+
+        let strFilters = filters.join(" ");
+
+        return "html {-webkit-filter: "+strFilters+";} "+exclude.join(', ')+" {-webkit-filter: "+strFilters+";}";
       }
 
       if (request.message === 'invert!') {
