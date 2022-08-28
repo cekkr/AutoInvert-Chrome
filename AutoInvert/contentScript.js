@@ -8,9 +8,9 @@ chrome.runtime.onMessage.addListener(
 
         exclude.push('video');
 
-        // think about these
-        exclude.push('svg'); // could work
-        exclude.push('canvas');
+        // think about these:
+        //exclude.push('svg');
+        //exclude.push('canvas');
 
         let percentage = invert ? 100 : 0;
 

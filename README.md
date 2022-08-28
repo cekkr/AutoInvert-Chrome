@@ -1,13 +1,13 @@
 # AutoInvert 
 ## A Google Chrome extension for the _Dark Mode_ in every website!
 
-AutoInvert inverts pages colors (but not their images!) on Google Chrome to **reduce strain on eyes and improve readability at night, keeping the setting in every tab of the domains where it's active**. 
+AutoInvert inverts pages colors (but not their images or videos!) on Google Chrome to **reduce strain on eyes and improve readability at night, keeping the setting in every tab of the domains where it's active**. 
 
 ![AutoInvert](https://i.ibb.co/ZK1SLJK/big-logo-cover-freestyle.png)
 
 ### Get the dark mode (or light mode) on unsupported websites, activate and deactive with an unique button!
 
-***Current version: 0.3.2 (8 Aug 22)***
+***Current version: 0.3.3 (28 Aug 22)***
 
 ## How to install it <i>(ouside Chrome Store)</i>
 In this moment the extensions is in revision phase on the Chrome Store, but you could install manually it as-is on GitHub. 
