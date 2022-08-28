@@ -44,7 +44,7 @@ It will appears a PopUp with the list of the enabled extensions, and at the bott
   <tr><td colspan="2" align="center"><h3><i>Discover how your vision changes</i></h3></td></tr>
 </table>
 
-![AutoInvert Toggle Screenshot](https://i.ibb.co/R3YJPn0/wikipedia-chrome-store-screenshot.png)
+![AutoInvert compare screenshot](https://i.ibb.co/zG0WrjN/wiki-en-rome-compare.jpg)
 
 ##### Developed with 🧡 by Riccardo Cecchini (cekkr) 
 <sup>📧 rcecchini.ds at gmail dot com</sup>
