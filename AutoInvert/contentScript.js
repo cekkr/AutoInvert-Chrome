@@ -3,10 +3,6 @@ chrome.runtime.onMessage.addListener(
       // listen for messages sent from background.js    
       const inverterStyleId = "extAutoInverterRunning";
 
-      function getFilters(bool){
-
-      }
-
       function invertFreeStyle(invert, exclude){
         // Tags to exclude from color inverting
         exclude = exclude || []; 
@@ -30,6 +26,8 @@ chrome.runtime.onMessage.addListener(
       }
 
       if (request.message === 'invert!') {
+
+        console.log("AutoInvert extension action", request);
 
         var style = document.getElementById(inverterStyleId);
         if (!style) {

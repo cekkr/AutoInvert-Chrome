@@ -9,7 +9,9 @@ function getDomain(url){
 // tab relative
 var domainRef = undefined;
 
-function execToggle(tabId, url, toggle){
+function execInvert(tabId, url, toggle){
+	console.log("execToggle", tabId, url, toggle, domainRef);
+
 	if(!domainRef){
 		if(url)
 			domainRef = getDomain(url);
@@ -18,8 +20,11 @@ function execToggle(tabId, url, toggle){
 	if(domainRef){
 
 		if(toggle){
+			console.log("toggle", domainRef, domainsToggles[domainRef]);
 			domainsToggles[domainRef] = !domainsToggles[domainRef];
 		}
+
+		console.log("domainRef", domainRef, domainsToggles[domainRef]);
 
 		chrome.tabs.sendMessage(tabId, {
 			message: 'invert!',
@@ -37,7 +42,7 @@ function execToggle(tabId, url, toggle){
 
 // Event: click on AutoInvert button
 chrome.action.onClicked.addListener(function(tab) {
-	execToggle(tab.id, tab.url, true);
+	execInvert(tab.id, tab.url, true);
 });
 
 // Current page updated
@@ -45,14 +50,15 @@ chrome.tabs.onUpdated.addListener(
 	function (tabId, changeInfo, tab) {
 		console.info("currTabUpdated", changeInfo, tab);
 		tabsUrl[tab.id] = tab.url;
-		execToggle(tab.id, tab.url);			
+		execInvert(tab.id, tab.url);			
 	}
 );
 
 // Event: Changed Tab
 chrome.tabs.onActivated.addListener(
 	function (res) {
-		domainRef = undefined
-		execToggle(res.tabId, tabsUrl[res.tabId]);
+		console.log("tabs.onActivated", res, tabsUrl[res.tabId]);
+		domainRef = undefined;
+		execInvert(res.tabId, tabsUrl[res.tabId]);
 	}
 );
