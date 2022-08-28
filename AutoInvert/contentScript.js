@@ -22,7 +22,14 @@ chrome.runtime.onMessage.addListener(
 
         let strFilters = filters.join(" ");
 
-        return "html {-webkit-filter: "+strFilters+";} "+exclude.join(', ')+" {-webkit-filter: "+strFilters+";}";
+        return `html { 
+          -webkit-filter: `+strFilters+`;
+          background-color: white; /* experimental method for handling certain websites */
+        } 
+        ` // excluded elements (inverted twice => not inverted)
+        +exclude.join(', ')+` {
+          -webkit-filter: "+strFilters+";
+        }`;
       }
 
       if (request.message === 'invert!') {
