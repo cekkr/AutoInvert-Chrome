@@ -11,9 +11,10 @@ AutoInvert inverts pages colors (but not their images!) on Google Chrome to **re
 ## How to install it <i>(ouside Chrome Store)</i>
 In this moment the extensions is in revision phase on the Chrome Store, but you could install manually it as-is on GitHub. 
 
+<img align="left" width="300" src="https://i.ibb.co/nb3CW6v/how-to-pin.jpg">
+
 1\. [Download the repository zip archive](https://github.com/cekkr/autoinvert-chrome/archive/refs/heads/main.zip) and then extract it, and move it in a secure directory different than Downloads. 
 
-<img align="left" width="300" src="https://i.ibb.co/nb3CW6v/how-to-pin.jpg">
 2\. Then, in Chrome, click on the <b>puzzle icon</b> at top-right of the window, at the right of the option buttons and before the other extensions' icons. 
 It will appears a PopUp with the list of the enabled extensions, and at the bottom click on "Manage Extensions". 
 
@@ -21,7 +22,9 @@ It will appears a PopUp with the list of the enabled extensions, and at the bott
 
 4\. <b>At this point, for showing at the top of the icon the AutoInvert toggle button you have to reclick on the <i>puzzle icon</i> and pin the extensions.</b>
 
-<img align="center" width="650" src="https://i.ibb.co/0XNqwZC/chrome-how-to-extension-developer.jpg">
+<p align="center">
+  <img align="center" width="860" src="https://i.ibb.co/0XNqwZC/chrome-how-to-extension-developer.jpg">
+</p>
 
 <p align="center">
   <b><i>It's advised to restart the browser after the installation of this extension.</i></b>
