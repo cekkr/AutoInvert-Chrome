@@ -21,23 +21,18 @@ function execInvert(tab, toggle){
 			domainsToggles[domainRef] = !domainsToggles[domainRef];
 		}
 
+		// just do it
 		let tabToggle = domainsToggles[domainRef];
 
-		if(tab.lastToggle !== tabToggle && tab.status == 'complete'){
-			console.log("domainRef", domainRef, domainsToggles[domainRef]);
+		chrome.tabs.sendMessage(tab.id, {
+			message: 'invert!',
+			toggle: tabToggle,
+		});
 
-			chrome.tabs.sendMessage(tab.id, {
-				message: 'invert!',
-				toggle: tabToggle,
-			});
-
-			if (tabToggle) {
-				chrome.action.setIcon({path: "images/on.png", tabId:tab.id});
-			} else {
-				chrome.action.setIcon({path: "images/off.png", tabId:tab.id});
-			}
-
-			tab.lastToggle = tabToggle;
+		if (tabToggle) {
+			chrome.action.setIcon({path: "images/on.png", tabId:tab.id});
+		} else {
+			chrome.action.setIcon({path: "images/off.png", tabId:tab.id});
 		}
 	}
 }
@@ -50,7 +45,7 @@ function extractPersonalTabObj(tab){
 		myTab.domainRef = getDomain(tab.url);
 	}
 
-	myTab.status = tab.status;
+	myTab.status = tab.status
 
 	return myTab;
 }
