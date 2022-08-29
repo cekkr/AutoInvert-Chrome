@@ -1,12 +1,16 @@
+const invertExceptionClass = "autoInvertException";
+const emptyChars = [' ', '\r', '\n'];
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
       // listen for messages sent from background.js    
       const inverterStyleId = "extAutoInverterRunning";
 
-      function invertFreeStyle(invert, exclude){
+      function invertFreeStyle(invert, exclude){ // exclude is a possible paramater. Possible. 
         // Tags to exclude from color inverting
         exclude = exclude || []; 
 
+        exclude.push('.'+invertExceptionClass);
         exclude.push('img');
         exclude.push('video');
 
@@ -34,6 +38,33 @@ chrome.runtime.onMessage.addListener(
 
         //console.log('Elaborated color inverting style: ' , style);
 
+        ///
+        /// Handle empty div elements with backgrounds
+        ///
+        let emptyBackgrounds = [...document.querySelectorAll('div[style*="background-image"]')];
+        emptyBackgrounds.forEach(node => {
+          let html = node.innerHTML;
+
+          let isEmpty = true;
+
+          for(let c in html){
+            if(emptyChars.indexOf(html[c])<0){
+              isEmpty = false;
+              break;
+            }
+          }
+
+          if(isEmpty){
+            console.debug("AutoInvert exception applied to element", node);
+
+            if(invert)
+              node.classList.add(invertExceptionClass); 
+            else 
+              node.classList.remove(invertExceptionClass);
+          }
+        });
+
+        // return final style
         return style;
       }
 
