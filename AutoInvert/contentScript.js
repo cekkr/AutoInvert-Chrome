@@ -10,6 +10,7 @@ chrome.runtime.onMessage.addListener(
         // Tags to exclude from color inverting
         exclude = exclude || []; 
 
+        exclude.push('div[style*="background-image"]:empty');
         exclude.push('.'+invertExceptionClass);
         exclude.push('img');
         exclude.push('video');
@@ -41,13 +42,14 @@ chrome.runtime.onMessage.addListener(
         ///
         /// Handle empty div elements with backgrounds
         ///
-        let emptyBackgrounds = [...document.querySelectorAll('div[style*="background-image"]')];
+        let emptyBackgrounds = [...document.querySelectorAll('div[style*="background-image"]:not(:empty)')];
         emptyBackgrounds.forEach(node => {
           let html = node.innerHTML;
 
           let isEmpty = true;
 
           for(let c in html){
+            //todo: add support to comment (interesting algorithmically)
             if(emptyChars.indexOf(html[c])<0){
               isEmpty = false;
               break;
