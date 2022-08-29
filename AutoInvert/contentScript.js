@@ -2,29 +2,31 @@ const invertExceptionClass = "autoInvertException";
 const applyBackgroundExceptionOnElements = ['div', 'figure'];
 const emptyChars = [' ', '\r', '\n'];
 
+/// Excluded element from brightness inverting list
+const exclude = []; 
 
+// background-image exceptions
+exclude.push('.'+invertExceptionClass);
+
+for(let el of applyBackgroundExceptionOnElements)
+  exclude.push(el + '[style*="background-image"]:empty');
+
+exclude.push('img');
+exclude.push('video');
+
+// think about these tags:
+//exclude.push('svg');
+//exclude.push('canvas');
+
+///
+/// Wait for an order from background.js
+///
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
       // listen for messages sent from background.js    
       const inverterStyleId = "extAutoInverterRunning";
 
-      function invertFreeStyle(invert, exclude){ // exclude is a possible paramater. Possible. 
-        // Tags to exclude from color inverting
-        exclude = exclude || []; 
-
-        // background-image exceptions
-        exclude.push('.'+invertExceptionClass);
-
-        for(let el of applyBackgroundExceptionOnElements)
-          exclude.push(el + '[style*="background-image"]:empty');
-
-        exclude.push('img');
-        exclude.push('video');
-
-        // think about these tags:
-        //exclude.push('svg');
-        //exclude.push('canvas');
-
+      function invertFreeStyle(invert){
         // Calculate filters
         let filters = [];
 
@@ -34,14 +36,22 @@ chrome.runtime.onMessage.addListener(
         let strFilters = filters.join(" ");
 
         // the background-color it's experimental method for handling certain websites that uses default background color
-        let style = `html { 
+        // iframe are simply ignored, for the moment...
+        
+        let style = `
+        html { 
           -webkit-filter: `+strFilters+`;
           background-color: white; 
         } 
+
+        iframe {
+          -webkit-filter: `+strFilters+`;
+        }
+
         ` // excluded elements (inverted twice => not inverted)
         +exclude.join(', ')+` {
-          -webkit-filter: `+strFilters+`;
-        }`;
+          -webkit-filter: `+strFilters+` contrast(0.80) brightness(1.10);
+        }`; //experimental: for handling particular cases, a contrast/brightness equalization is applied...
 
         //console.log('Elaborated color inverting style: ' , style);
 

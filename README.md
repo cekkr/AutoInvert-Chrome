@@ -7,7 +7,7 @@ AutoInvert inverts pages brightness (but not their images or videos) on Google C
 
 #### Activate and deactive it with an unique button how many times you prefer, it works in real time without reloads nor waiting times!
 
-<sub><i>Current version: 0.3.7.2 (30 Aug 22)</i><sub>
+<sub><i>Current version: 0.3.7.4 (30 Aug 22)</i><sub>
 
 <hr>
 
