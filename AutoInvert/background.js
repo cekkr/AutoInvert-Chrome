@@ -24,15 +24,17 @@ function execInvert(tab, toggle){
 		// just do it
 		let tabToggle = domainsToggles[domainRef];
 
-		chrome.tabs.sendMessage(tab.id, {
-			message: 'invert!',
-			toggle: tabToggle,
-		});
+		if(tabToggle !== undefined){
+			chrome.tabs.sendMessage(tab.id, {
+				message: 'invert!',
+				toggle: tabToggle,
+			});
 
-		if (tabToggle) {
-			chrome.action.setIcon({path: "images/on.png", tabId:tab.id});
-		} else {
-			chrome.action.setIcon({path: "images/off.png", tabId:tab.id});
+			if (tabToggle) {
+				chrome.action.setIcon({path: "images/on.png", tabId:tab.id});
+			} else {
+				chrome.action.setIcon({path: "images/off.png", tabId:tab.id});
+			}
 		}
 	}
 }

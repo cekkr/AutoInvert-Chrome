@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener(
 
       if (request.message === 'invert!') {
 
-        console.info("AutoInvert extension action", request);
+        var action = false;
 
         var style = document.getElementById(inverterStyleId);
         if (!style) {
@@ -48,9 +48,23 @@ chrome.runtime.onMessage.addListener(
             style.id = inverterStyleId;
             style.innerHTML = invertFreeStyle(request.toggle);
             document.head.appendChild(style);
+
+            action = true;
         }
-        else 
-          style.innerHTML = invertFreeStyle(request.toggle);
+        else {
+          let styleToggle = style.getAttribute('autoInvert') == 'true' ? true : false;
+          
+          if(request.toggle != styleToggle){
+            style.innerHTML = invertFreeStyle(request.toggle);
+
+            action = true;
+          } 
+        }
+
+        if(action){
+          console.info("AutoInvert extension action", request);
+          style.setAttribute("autoInvert", request.toggle);
+        }
       }
 
       //sendResponse(true); // everythin fine broh
