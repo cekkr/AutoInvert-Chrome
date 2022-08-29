@@ -10,10 +10,13 @@ chrome.runtime.onMessage.addListener(
         // Tags to exclude from color inverting
         exclude = exclude || []; 
 
+        // background-image exceptions
         exclude.push('div[style*="background-image"]:empty');
         exclude.push('.'+invertExceptionClass);
+
         exclude.push('img');
         exclude.push('video');
+        exclude.push('figure');
 
         // think about these tags:
         //exclude.push('svg');
