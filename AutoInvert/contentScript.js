@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(
 
         exclude.push('img');
         exclude.push('video');
-        exclude.push('figure');
+        //exclude.push('figure:hover'); // makes an exception when mouse is over it //todo: to be well experimented...
 
         // think about these tags:
         //exclude.push('svg');
