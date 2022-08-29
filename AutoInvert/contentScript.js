@@ -22,9 +22,10 @@ chrome.runtime.onMessage.addListener(
 
         let strFilters = filters.join(" ");
 
+        // the background-color it's experimental method for handling certain websites that uses default background color
         return `html { 
           -webkit-filter: `+strFilters+`;
-          background-color: white; /* experimental method for handling certain websites */
+          background-color: white; 
         } 
         ` // excluded elements (inverted twice => not inverted)
         +exclude.join(', ')+` {
