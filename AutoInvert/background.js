@@ -1,64 +1,79 @@
 // absolute
-var tabsUrl = {};
-var domainsToggles = {};
+let domainsToggles = {};
+let tabs = {};
 
 function getDomain(url){
+	console.log("get domain of",url);
 	return url.split('//')[1].split('/')[0]; // pls don't kill me
 }
 
-// tab relative
-var domainRef = undefined;
+function execInvert(tab, toggle){
+	console.log("execToggle", tab, toggle);
 
-function execInvert(tabId, url, toggle){
-	console.log("execToggle", tabId, url, toggle, domainRef);
+	if(!tab)
+		return; // next time, i swear
 
-	if(!domainRef){
-		if(url)
-			domainRef = getDomain(url);
-	}
+	let domainRef = tab.domainRef;
 
 	if(domainRef){
 
 		if(toggle){
-			console.log("toggle", domainRef, domainsToggles[domainRef]);
 			domainsToggles[domainRef] = !domainsToggles[domainRef];
 		}
 
-		console.log("domainRef", domainRef, domainsToggles[domainRef]);
+		// just do it
+		let tabToggle = domainsToggles[domainRef];
 
-		chrome.tabs.sendMessage(tabId, {
+		chrome.tabs.sendMessage(tab.id, {
 			message: 'invert!',
-			toggle: domainsToggles[domainRef],
-		})
+			toggle: tabToggle,
+		});
 
-		if (domainsToggles[domainRef]) {
-			chrome.action.setIcon({path: "images/on.png", tabId:tabId});
+		if (tabToggle) {
+			chrome.action.setIcon({path: "images/on.png", tabId:tab.id});
 		} else {
-			chrome.action.setIcon({path: "images/off.png", tabId:tabId});
+			chrome.action.setIcon({path: "images/off.png", tabId:tab.id});
 		}
-
 	}
+}
+
+function extractPersonalTabObj(tab){
+	let myTab = tabs[tab.id] = tabs[tab.id] || {id: tab.id};
+
+	if(myTab.url != tab.url){
+		myTab.url = tab.url;		
+		myTab.domainRef = getDomain(tab.url);
+	}
+
+	myTab.status = tab.status
+
+	return myTab;
 }
 
 // Event: click on AutoInvert button
 chrome.action.onClicked.addListener(function(tab) {
-	execInvert(tab.id, tab.url, true);
+	console.log("AutoInvert toggled", tab);
+	let myTab = extractPersonalTabObj(tab);
+	execInvert(myTab, true);
 });
 
 // Current page updated
 chrome.tabs.onUpdated.addListener(
 	function (tabId, changeInfo, tab) {
 		console.info("currTabUpdated", changeInfo, tab);
-		tabsUrl[tab.id] = tab.url;
-		execInvert(tab.id, tab.url);			
+
+		let myTab = extractPersonalTabObj(tab);
+		execInvert(myTab);			
 	}
 );
 
 // Event: Changed Tab
 chrome.tabs.onActivated.addListener(
 	function (res) {
-		console.log("tabs.onActivated", res, tabsUrl[res.tabId]);
+		console.log("tabs.onActivated", res, tabs[res.tabId]);
+
 		domainRef = undefined;
-		execInvert(res.tabId, tabsUrl[res.tabId]);
+
+		execInvert(tabs[res.tabId]);
 	}
 );

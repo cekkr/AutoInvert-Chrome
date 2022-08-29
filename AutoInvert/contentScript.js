@@ -22,12 +22,24 @@ chrome.runtime.onMessage.addListener(
 
         let strFilters = filters.join(" ");
 
-        return "html {-webkit-filter: "+strFilters+";} "+exclude.join(', ')+" {-webkit-filter: "+strFilters+";}";
+        // the background-color it's experimental method for handling certain websites that uses default background color
+        let style = `html { 
+          -webkit-filter: `+strFilters+`;
+          background-color: white; 
+        } 
+        ` // excluded elements (inverted twice => not inverted)
+        +exclude.join(', ')+` {
+          -webkit-filter: `+strFilters+`;
+        }`;
+
+        //console.log('Elaborated color inverting style: ' , style);
+
+        return style;
       }
 
       if (request.message === 'invert!') {
 
-        console.log("AutoInvert extension action", request);
+        console.info("AutoInvert extension action", request);
 
         var style = document.getElementById(inverterStyleId);
         if (!style) {
