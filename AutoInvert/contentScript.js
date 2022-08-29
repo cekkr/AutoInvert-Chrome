@@ -23,14 +23,18 @@ chrome.runtime.onMessage.addListener(
         let strFilters = filters.join(" ");
 
         // the background-color it's experimental method for handling certain websites that uses default background color
-        return `html { 
+        let style = `html { 
           -webkit-filter: `+strFilters+`;
           background-color: white; 
         } 
         ` // excluded elements (inverted twice => not inverted)
         +exclude.join(', ')+` {
-          -webkit-filter: "+strFilters+";
+          -webkit-filter: `+strFilters+`;
         }`;
+
+        //console.log('Elaborated color inverting style: ' , style);
+
+        return style;
       }
 
       if (request.message === 'invert!') {
