@@ -1,5 +1,7 @@
 const invertExceptionClass = "autoInvertException";
+const applyBackgroundExceptionOnElements = ['div', 'figure'];
 const emptyChars = [' ', '\r', '\n'];
+
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
@@ -11,12 +13,13 @@ chrome.runtime.onMessage.addListener(
         exclude = exclude || []; 
 
         // background-image exceptions
-        exclude.push('div[style*="background-image"]:empty');
         exclude.push('.'+invertExceptionClass);
+
+        for(let el of applyBackgroundExceptionOnElements)
+          exclude.push(el + '[style*="background-image"]:empty');
 
         exclude.push('img');
         exclude.push('video');
-        //exclude.push('figure:hover'); // makes an exception when mouse is over it //todo: to be well experimented...
 
         // think about these tags:
         //exclude.push('svg');
@@ -43,31 +46,33 @@ chrome.runtime.onMessage.addListener(
         //console.log('Elaborated color inverting style: ' , style);
 
         ///
-        /// Handle empty div elements with backgrounds
+        /// Handle empty elements with background-image
         ///
-        let emptyBackgrounds = [...document.querySelectorAll('div[style*="background-image"]:not(:empty)')];
-        emptyBackgrounds.forEach(node => {
-          let html = node.innerHTML;
+        for(let el of applyBackgroundExceptionOnElements){
+          let emptyBackgrounds = [...document.querySelectorAll(el+'[style*="background-image"]:not(:empty)')];
+          emptyBackgrounds.forEach(node => {
+            let html = node.innerHTML;
 
-          let isEmpty = true;
+            let isEmpty = true;
 
-          for(let c in html){
-            //todo: add support to comment (interesting algorithmically)
-            if(emptyChars.indexOf(html[c])<0){
-              isEmpty = false;
-              break;
+            for(let c in html){
+              //todo: add support to comment (interesting algorithmically)
+              if(emptyChars.indexOf(html[c])<0){
+                isEmpty = false;
+                break;
+              }
             }
-          }
 
-          if(isEmpty){
-            console.debug("AutoInvert exception applied to element", node);
+            if(isEmpty){
+              console.debug("AutoInvert exception applied to element", node);
 
-            if(invert)
-              node.classList.add(invertExceptionClass); 
-            else 
-              node.classList.remove(invertExceptionClass);
-          }
-        });
+              if(invert)
+                node.classList.add(invertExceptionClass); 
+              else 
+                node.classList.remove(invertExceptionClass);
+            }
+          });
+        }
 
         // return final style
         return style;
