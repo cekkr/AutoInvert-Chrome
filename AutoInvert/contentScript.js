@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener(
 
       if (request.message === 'invert!') {
 
-        console.log("AutoInvert extension action", request);
+        console.info("AutoInvert extension action", request);
 
         var style = document.getElementById(inverterStyleId);
         if (!style) {
