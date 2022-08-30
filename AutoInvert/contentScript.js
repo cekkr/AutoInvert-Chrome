@@ -2,6 +2,23 @@
 var autoInvertToogle = false;
 
 ///
+/// General functions
+///
+function isAlphaNumeric(str) {
+  var code, i, len;
+
+  for (i = 0, len = str.length; i < len; i++) {
+    code = str.charCodeAt(i);
+    if (!(code > 47 && code < 58) && // numeric (0-9)
+        !(code > 64 && code < 91) && // upper alpha (A-Z)
+        !(code > 96 && code < 123)) { // lower alpha (a-z)
+      return false;
+    }
+  }
+  return true;
+};
+
+///
 /// Excluded element from brightness inverting list
 ///
 const invertExceptionClass = "autoInvertException";
@@ -44,13 +61,16 @@ function exceptionsFinder(){
         let classList = [...node.classList];
 
         for(let cssClass of classList){
+          if(!isAlphaNumeric(cssClass))
+            continue;
+            
           let style = classes[cssClass];
           if(style === undefined){
             elem = document.querySelector('.'+cssClass);
             style = classes[cssClass] = getComputedStyle(elem);
           }  
 
-          if(style.getPropertyValue('background-image') != 'none'){
+          if(style && style.getPropertyValue('background-image') != 'none'){
             hasBackgroundImage = true;
             break;
           }
