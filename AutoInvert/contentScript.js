@@ -43,7 +43,7 @@ class WaitMoment{
 /// Excluded element from brightness inverting list
 ///
 const invertExceptionClass = "autoInvertException";
-const alreadyCheckedElement = "autoInvertAlreadyCheckedException";
+const alreadyCheckedElement = "autoInvertChecked";
 const applyBackgroundExceptionOnElements = ['div', 'figure'];
 
 const exclude = []; 
