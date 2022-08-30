@@ -142,6 +142,8 @@ function getInvertStyle(invert){
   // the background-color it's experimental method for handling certain websites that uses default background color
   // iframe are simply ignored, for the moment...
 
+  let excludeContrastFilter = invert ? ' contrast(0.80) brightness(1.10)' : ''; // this compensate some website visualization problem
+
   let style = `
   html { 
     -webkit-filter: `+strFilters+`;
@@ -154,7 +156,7 @@ function getInvertStyle(invert){
 
   ` // excluded elements (inverted twice => not inverted)
   +exclude.join(', ')+` {
-    -webkit-filter: `+strFilters+` contrast(0.80) brightness(1.10);
+    -webkit-filter: `+ strFilters + excludeContrastFilter+ `;
   }`; //experimental: for handling particular cases, a contrast/brightness equalization is applied...
 
   exceptionsFinder();

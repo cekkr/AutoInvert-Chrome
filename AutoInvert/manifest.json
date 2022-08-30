@@ -23,7 +23,7 @@
       "activeTab"
    ],
    "host_permissions": ["<all_urls>"],
-   "version": "0.3.8.4",
+   "version": "0.3.8.5",
    "author": "cekkr",
    "homepage_url": "https://github.com/cekkr/autoinvert-chrome"
 }
