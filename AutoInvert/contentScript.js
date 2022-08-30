@@ -51,57 +51,56 @@ let classes = {};
 
 function exceptionsFinder(){
   for(let el of applyBackgroundExceptionOnElements){
-    let emptyBackgrounds = [...document.querySelectorAll(el+':not(.'+invertExceptionClass+'):not(.'+alreadyCheckedElement+')')]; // +':not([style*="background-image"]:empty)
+    let emptyBackgrounds = [...document.querySelectorAll(el)]; // +':not(.'+alreadyCheckedElement+')'+':not([style*="background-image"]:empty)
     
     emptyBackgrounds.forEach(node => {
 
-      let hasBackgroundImage = (node.getAttribute("style")||'').includes("background-image")
+      if(!node.hasAttribute(alreadyCheckedElement)){
 
-      if(!hasBackgroundImage){
-        let classList = [...node.classList];
+        let hasBackgroundImage = (node.getAttribute("style")||'').includes("background-image")
 
-        for(let cssClass of classList){
-          if(!isAlphaNumeric(cssClass))
-            continue;
-            
-          let style = classes[cssClass];
-          if(style === undefined){
-            elem = document.querySelector('.'+cssClass);
-            style = classes[cssClass] = getComputedStyle(elem);
-          }  
+        if(!hasBackgroundImage){
+          let classList = [...node.classList];
 
-          if(style && style.getPropertyValue('background-image') != 'none'){
-            hasBackgroundImage = true;
-            break;
-          }
-        }
-      }
+          for(let cssClass of classList){
+            if(!isAlphaNumeric(cssClass))
+              continue;
+              
+            let style = classes[cssClass];
+            if(style === undefined){
+              elem = document.querySelector('.'+cssClass);
+              style = classes[cssClass] = getComputedStyle(elem);
+            }  
 
-      if(hasBackgroundImage){
-        let text = node.innerText;
-
-        let isEmpty = true;
-
-        for(let c in text){
-          const ch = text[c];
-
-          if(emptyChars.indexOf(ch)<0){  // Check if there are just useless char
-            isEmpty = false;
-            break;
+            if(style && style.getPropertyValue('background-image') != 'none'){
+              hasBackgroundImage = true;
+              break;
+            }
           }
         }
 
-        if(!isEmpty){
-          // AutoInvert exception applied to element
+        if(hasBackgroundImage){
+          let text = node.innerText;
 
-          if(autoInvertToogle)
+          let isEmpty = true;
+
+          for(let c in text){
+            const ch = text[c];
+
+            if(emptyChars.indexOf(ch)<0){  // Check if there are just useless char
+              isEmpty = false;
+              break;
+            }
+          }
+
+          if(isEmpty){
+            // AutoInvert exception applied to element
             node.classList.add(invertExceptionClass); 
-          else 
-            node.classList.remove(invertExceptionClass);
-        }
+          }
 
-        node.classList.add(alreadyCheckedElement); 
-        
+          node.setAttribute(alreadyCheckedElement, ""); 
+
+        }
       }
     });
   }
