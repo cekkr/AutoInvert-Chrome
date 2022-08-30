@@ -229,7 +229,7 @@ chrome.runtime.onMessage.addListener(
           style.setAttribute("autoInvert", autoInvertToogle);
 
           if(autoInvertToogle){
-            exceptionsFinder();
+            waitForExceptionsFinder.tick();
             observer.observe(targetNode, config);
           }
           else{
