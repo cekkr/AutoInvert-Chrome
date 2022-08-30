@@ -36,6 +36,10 @@ class WaitMoment{
 }
 
 ///
+/// Script
+///
+
+///
 /// Excluded element from brightness inverting list
 ///
 const invertExceptionClass = "autoInvertException";

@@ -1,6 +1,45 @@
-// absolute
+///
+/// General functions
+///
+
+// copied from contentScript.js //todo: make a common library js file?
+class WaitMoment{
+	constructor(waitMs, callback) {
+	  this.waitMs = callback;
+	  this.callback = callback; 
+	}
+  
+	tick(){
+	  clearTimeout(this.timeout);
+  
+	  let args = [...arguments];
+  
+	  this.timeout = setTimeout(()=>{
+		this.callback.apply(null, args);
+	  }, this.waitMs);
+	}
+  }
+
+///
+/// Script
+///
+
+// Absolute Variables
 let domainsToggles = {};
 let tabs = {};
+
+// Get variables from storage
+chrome.storage.local.get(['autoInvertData'], function(data) {
+	domainsToggles =  data.autoInvertData.domainsToggles;
+	console.log("Local storage loaded", data, domainsToggles);
+});
+
+// Wait 3 seconds before updating local storage
+const waitForUpdate = new WaitMoment(3000, ()=>{
+	chrome.storage.local.set({autoInvertData: {domainsToggles}}, function() {
+		console.log('Local storage updated');
+	});
+});
 
 function getDomain(url){
 	console.log("get domain of",url);
@@ -19,6 +58,7 @@ function execInvert(tab, toggle){
 
 		if(toggle){
 			domainsToggles[domainRef] = !domainsToggles[domainRef];
+			waitForUpdate.tick();
 		}
 
 		// just do it
@@ -73,9 +113,7 @@ chrome.tabs.onUpdated.addListener(
 chrome.tabs.onActivated.addListener(
 	function (res) {
 		console.log("tabs.onActivated", res, tabs[res.tabId]);
-
 		domainRef = undefined;
-
 		execInvert(tabs[res.tabId]);
 	}
 );
