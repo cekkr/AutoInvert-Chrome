@@ -30,7 +30,7 @@ let tabs = {};
 
 // Get variables from storage
 chrome.storage.local.get(['autoInvertData'], function(data) {
-	domainsToggles =  data.autoInvertData.domainsToggles;
+	Object.assign(domainsToggles, (data.autoInvertData || data).domainsToggles); // forgive the || but I'm still insecure about how the object is saved
 	console.log("Local storage loaded", data, domainsToggles);
 });
 
