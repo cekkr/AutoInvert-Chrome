@@ -5,6 +5,7 @@ var autoInvertToogle = false;
 /// Excluded element from brightness inverting list
 ///
 const invertExceptionClass = "autoInvertException";
+const alreadyCheckedElement = "autoInvertAlreadyCheckedException";
 const applyBackgroundExceptionOnElements = ['div', 'figure'];
 
 const exclude = []; 
@@ -12,8 +13,8 @@ const exclude = [];
 // background-image exceptions
 exclude.push('.'+invertExceptionClass);
 
-for(let el of applyBackgroundExceptionOnElements)
-  exclude.push(el + '[style*="background-image"]:empty');
+/*for(let el of applyBackgroundExceptionOnElements)
+  exclude.push(el + '[style*="background-image"]:empty');*/ // leave it to exceptionsFinder function
 
 exclude.push('img');
 exclude.push('video');
@@ -28,13 +29,12 @@ exclude.push('video');
 
 // For empty element analyzing
 const emptyChars = [' ', '\r', '\n', '\t'];
-const tagClosures = ["<", ">"];
 
 let classes = {};
 
 function exceptionsFinder(){
   for(let el of applyBackgroundExceptionOnElements){
-    let emptyBackgrounds = [...document.querySelectorAll(el+':not([style*="background-image"]:empty):not(.'+invertExceptionClass+')')];
+    let emptyBackgrounds = [...document.querySelectorAll(el+':not(.'+invertExceptionClass+'):not(.'+alreadyCheckedElement+')')]; // +':not([style*="background-image"]:empty)
     
     emptyBackgrounds.forEach(node => {
 
@@ -58,66 +58,28 @@ function exceptionsFinder(){
       }
 
       if(hasBackgroundImage){
-        let html = node.innerHTML;
+        let text = node.innerText;
 
         let isEmpty = true;
 
-        let tagStatus = false;
-        let commentStatus = false;
-        let commentDying = 0;
+        for(let c in text){
+          const ch = text[c];
 
-        for(let c in html){
-          const ch = html[c];
-
-          if(!tagStatus){
-            if(ch == tagClosures[0]){
-              tagStatus = true;
-              commentStatus = 0;
-            }
-            else if(emptyChars.indexOf(ch)<0){  // Check if there are just useless char
-              isEmpty = false;
-              break;
-            }
+          if(emptyChars.indexOf(ch)<0){  // Check if there are just useless char
+            isEmpty = false;
+            break;
           }
-          else {
-            /// Check if it's a comment
-            if(typeof commentStatus === 'number'){
-              // you're looking for the next !-- of a comment
-              if(commentStatus == 0){
-                if(ch=='!')
-                  commentStatus++;
-                else 
-                  commentStatus = false;
-              }
-              else if(commentStatus > 0){ 
-                if(ch=='-'){
-                  commentStatus++;
 
-                  if(commentStatus == 3)
-                    commentStatus = true; // we are at <!-- ... yep, it's a comment
-                }
-                else 
-                  commentStatus = false;
-              }
-            }
+          if(!isEmpty){
+            // AutoInvert exception applied to element
 
-            if(commentStatus == false){
-              if(ch == tagClosures[1] && (commentStatus === false || commentDying >= 2))
-                tagStatus = false;
-            }
-            
-            if(commentStatus === true) // count final --> of an end comment
-              commentDying = ch == '-' ? commentDying+1 : 0; 
+            if(autoInvertToogle)
+              node.classList.add(invertExceptionClass); 
+            else 
+              node.classList.remove(invertExceptionClass);
           }
-        }
 
-        if(isEmpty){
-          // AutoInvert exception applied to element
-
-          if(autoInvertToogle)
-            node.classList.add(invertExceptionClass); 
-          else 
-            node.classList.remove(invertExceptionClass);
+          node.classList.add(alreadyCheckedElement); 
         }
       }
     });
