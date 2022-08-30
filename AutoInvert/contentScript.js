@@ -89,18 +89,19 @@ function exceptionsFinder(){
             isEmpty = false;
             break;
           }
-
-          if(!isEmpty){
-            // AutoInvert exception applied to element
-
-            if(autoInvertToogle)
-              node.classList.add(invertExceptionClass); 
-            else 
-              node.classList.remove(invertExceptionClass);
-          }
-
-          node.classList.add(alreadyCheckedElement); 
         }
+
+        if(!isEmpty){
+          // AutoInvert exception applied to element
+
+          if(autoInvertToogle)
+            node.classList.add(invertExceptionClass); 
+          else 
+            node.classList.remove(invertExceptionClass);
+        }
+
+        node.classList.add(alreadyCheckedElement); 
+        
       }
     });
   }
