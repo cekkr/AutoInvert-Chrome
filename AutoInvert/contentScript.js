@@ -18,6 +18,23 @@ function isAlphaNumeric(str) {
   return true;
 };
 
+class WaitMoment{
+  constructor(waitMs, callback) {
+    this.waitMs = callback;
+    this.callback = callback; 
+  }
+
+  tick(){
+    clearTimeout(this.timeout);
+
+    let args = [...arguments];
+
+    this.timeout = setTimeout(()=>{
+      this.callback.apply(null, args);
+    }, this.waitMs);
+  }
+}
+
 ///
 /// Excluded element from brightness inverting list
 ///
@@ -111,6 +128,10 @@ function exceptionsFinder(){
 ///
 /// https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/disconnect
 
+let waitForExceptionsFinder = new WaitMoment(30, ()=>{
+  exceptionsFinder();
+});
+
 // Select the node that will be observed for mutations
 const targetNode = document.querySelector('body');
 
@@ -119,7 +140,7 @@ const config = { attributes: false, childList: true, subtree: true };
 
 // Callback function to execute when mutations are observed
 const callback = (mutationList, observer) => {
-  exceptionsFinder();
+  waitForExceptionsFinder.tick();
 };
 
 // Create an observer instance linked to the callback function
@@ -158,8 +179,6 @@ function getInvertStyle(invert){
   +exclude.join(', ')+` {
     -webkit-filter: `+ strFilters + excludeContrastFilter+ `;
   }`; //experimental: for handling particular cases, a contrast/brightness equalization is applied...
-
-  exceptionsFinder();
 
   // return final style
   return style;
@@ -205,11 +224,14 @@ chrome.runtime.onMessage.addListener(
           console.info("AutoInvert extension action", request);
           style.setAttribute("autoInvert", autoInvertToogle);
 
-          if(autoInvertToogle)
+          if(autoInvertToogle){
+            exceptionsFinder();
             observer.observe(targetNode, config);
-          else
+          }
+          else{
             observer.disconnect();
           }
+        }
       }
 
       //sendResponse(true); // everythin fine broh
