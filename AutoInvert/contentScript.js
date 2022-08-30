@@ -76,7 +76,20 @@ function exceptionsFinder(){
     
     emptyBackgrounds.forEach(node => {
 
-      if(!node.hasAttribute(alreadyCheckedElement)){
+      let possibleEl = !node.hasAttribute(alreadyCheckedElement);
+
+      // check if contains excluded elements
+      if(possibleEl){
+        for(let excl of exclude){
+          if(node.querySelector(excl)){
+            possibleEl = false;
+            break;
+          }
+        }
+      }
+
+      // go go go!
+      if(possibleEl){
 
         let hasBackgroundImage = (node.getAttribute("style")||'').includes("background-image")
 
