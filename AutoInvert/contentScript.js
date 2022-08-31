@@ -195,7 +195,10 @@ function getInvertStyle(invert){
   ` // excluded elements (inverted twice => not inverted)
   +exclude.join(', ')+` {
     -webkit-filter: `+ strFilters + excludeContrastFilter+ `;
-  }`; //experimental: for handling particular cases, a contrast/brightness equalization is applied...
+  }`; //experimental: excludeContrastFilter for handling particular cases, a contrast/brightness equalization is applied...
+
+  if(invert)
+    style += ' img{border-radius: 5px;}'; // style matters, also if the image has high contrast against the background
 
   // return final style
   return style;
