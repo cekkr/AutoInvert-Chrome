@@ -190,14 +190,16 @@ function getInvertStyle(invert){
   // the background-color it's experimental method for handling certain websites that uses default background color
   // iframe are simply ignored, for the moment...
 
-  let imgExcludeContrastFilter = invert ? ' contrast(0.80) brightness(1.10); border-radius: 5px;' : ''; // this compensate some website visualization problem
+  // Should set background to HTML?
+  // background-color: white;
 
-  let bodyTextShadow = !invert ? '' : 'body{text-shadow: 0px 0px 3px rgba(0,0,0,0.35); -webkit-text-stroke-width: 0.2px; -webkit-text-stroke-color: rgba(255,255,255,0.4);}'; //Difficult choice... what I'm doing?
+  let imgExcludeContrastFilter = invert ? ' contrast(0.80) brightness(1.10); border-radius: 5px;' : ''; // this compensate some website visualization problem
+  let bodyTextShadow = !invert ? '' : 'body{text-shadow: 0px 0px 3px rgba(128,128,128,0.35); -webkit-text-stroke-width: 0.2px; -webkit-text-stroke-color: rgba(255,255,255,0.4);}'; //Difficult choice... what I'm doing?
 
   let style = `
   html { 
-    -webkit-filter: `+strFilters+`;
-    background-color: white; 
+    -webkit-filter: `+strFilters +`; 
+    background-color:white;
   } 
 
   `+ bodyTextShadow +`
@@ -243,7 +245,7 @@ chrome.runtime.onMessage.addListener(
             style.type = "text/css";
             style.id = inverterStyleId;
             style.innerHTML = getInvertStyle();
-            document.head.appendChild(style);
+            document.head.append(style);
 
             action = true;
         }
