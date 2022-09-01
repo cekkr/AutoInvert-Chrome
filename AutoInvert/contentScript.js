@@ -54,8 +54,9 @@ exclude.push('.'+invertExceptionClass);
 /*for(let el of applyBackgroundExceptionOnElements)
   exclude.push(el + '[style*="background-image"]:empty');*/ // leave it to exceptionsFinder function
 
-exclude.push('img');
+//exclude.push('img'); // directly handled in the CSS
 exclude.push('video');
+exclude.push('iframe');
 
 // think about these tags:
 //exclude.push('svg');
@@ -68,10 +69,18 @@ exclude.push('video');
 // For empty element analyzing
 const emptyChars = [' ', '\r', '\n', '\t'];
 
+function clearParentsExceptions(el){
+  while(el = el.parentElement){
+    if(el.hasAttribute(alreadyCheckedElement))
+      node.classList.remove(invertExceptionClass); 
+  }
+}
+
 let classes = {};
 
 function exceptionsFinder(){
   for(let el of applyBackgroundExceptionOnElements){
+    //tothink: a more efficient way for collecting elements to invert
     let emptyBackgrounds = [...document.querySelectorAll(el)]; // +':not(.'+alreadyCheckedElement+')'+':not([style*="background-image"]:empty)
     
     emptyBackgrounds.forEach(node => {
@@ -130,6 +139,7 @@ function exceptionsFinder(){
           if(isEmpty){
             // AutoInvert exception applied to element
             node.classList.add(invertExceptionClass); 
+            clearParentsExceptions(node); // remove exceptions to parent element
           }
 
           node.setAttribute(alreadyCheckedElement, ""); 
@@ -188,14 +198,17 @@ function getInvertStyle(invert){
     background-color: white; 
   } 
 
-  iframe {
-    -webkit-filter: `+strFilters+`;
-  }
-
+  /* Excluded elements */
   ` // excluded elements (inverted twice => not inverted)
   +exclude.join(', ')+` {
-    -webkit-filter: `+ strFilters + excludeContrastFilter+ `;
-  }`; //experimental: excludeContrastFilter for handling particular cases, a contrast/brightness equalization is applied...
+    -webkit-filter: `+ strFilters + `;
+  }
+  
+  img{
+    -webkit-filter: `+ strFilters + ' ' + excludeContrastFilter +`;
+  } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
+  
+  
 
   if(invert)
     style += ' img{border-radius: 5px;}'; // style matters, also if the image has high contrast against the background
@@ -215,6 +228,11 @@ chrome.runtime.onMessage.addListener(
 
       // listen for messages sent from background.js    
       if (request.message === 'invert!') {
+
+        if(request.status == 'update'){
+          waitForExceptionsFinder.tick();
+          return;
+        }
 
         var action = false;
 
