@@ -3,3 +3,7 @@ Notes:
 
 toThink:
 - Implement iframe support (and how to?)
+
+
+Guides:
+Manifest v3 examples: https://github.com/SimGus/chrome-extension-v3-starter
