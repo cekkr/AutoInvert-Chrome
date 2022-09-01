@@ -194,7 +194,7 @@ function getInvertStyle(invert){
   // background-color: white;
 
   let imgExcludeContrastFilter = invert ? ' contrast(0.80) brightness(1.10); border-radius: 5px;' : ''; // this compensate some website visualization problem
-  let bodyTextShadow = !invert ? '' : 'body{text-shadow: 0px 0px 3px rgba(128,128,128,0.35); -webkit-text-stroke-width: 0.2px; -webkit-text-stroke-color: rgba(255,255,255,0.4);}'; //Difficult choice... what I'm doing?
+  let bodyTextShadow = !invert ? '' : 'body{text-shadow: 0px 0px 3px rgba(128,128,128, 0.5); -webkit-text-stroke-width: 0.25px; -webkit-text-stroke-color: rgba(128,128,128, 0.5);}'; //Difficult choice... what I'm doing?
 
   let style = `
   html { 
