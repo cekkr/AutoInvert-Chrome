@@ -71,8 +71,9 @@ const emptyChars = [' ', '\r', '\n', '\t'];
 
 function clearParentsExceptions(el){
   while(el = el.parentElement){
-    if(el.hasAttribute(alreadyCheckedElement))
-      node.classList.remove(invertExceptionClass); 
+    if(el.hasAttribute(alreadyCheckedElement)){ //todo: maybe better to remove it
+      node.classList.remove(invertExceptionClass); 	  
+	}
   }
 }
 
@@ -167,6 +168,7 @@ const config = { attributes: false, childList: true, subtree: true };
 
 // Callback function to execute when mutations are observed
 const callback = (mutationList, observer) => {
+  //todo: remove alreadyCheckedElement from mutated elements
   waitForExceptionsFinder.tick();
 };
 
