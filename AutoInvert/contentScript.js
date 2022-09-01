@@ -190,13 +190,17 @@ function getInvertStyle(invert){
   // the background-color it's experimental method for handling certain websites that uses default background color
   // iframe are simply ignored, for the moment...
 
-  let excludeContrastFilter = invert ? ' contrast(0.80) brightness(1.10)' : ''; // this compensate some website visualization problem
+  let excludeContrastFilter = invert ? ' contrast(0.80) brightness(1.10); border-radius: 5px;' : ''; // this compensate some website visualization problem
+
+  let bodyTextShadow = !invert ? '' : 'body{text-shadow: 0px 0px 3px rgba(0,0,0,0.35); -webkit-text-stroke-width: 0.5px; -webkit-text-stroke-color: rgba(255,255,255,0.4);}'; //Difficult choice... what I'm doing?
 
   let style = `
   html { 
     -webkit-filter: `+strFilters+`;
     background-color: white; 
   } 
+
+  `+ bodyTextShadow +`
 
   /* Excluded elements */
   ` // excluded elements (inverted twice => not inverted)
@@ -208,11 +212,6 @@ function getInvertStyle(invert){
     -webkit-filter: `+ strFilters + ' ' + excludeContrastFilter +`;
   } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
   
-  
-
-  if(invert)
-    style += ' img{border-radius: 5px;}'; // style matters, also if the image has high contrast against the background
-
   // return final style
   return style;
 }
