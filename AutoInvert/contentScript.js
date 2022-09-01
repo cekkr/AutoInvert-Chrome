@@ -190,7 +190,7 @@ function getInvertStyle(invert){
   // the background-color it's experimental method for handling certain websites that uses default background color
   // iframe are simply ignored, for the moment...
 
-  let excludeContrastFilter = invert ? ' contrast(0.80) brightness(1.10); border-radius: 5px;' : ''; // this compensate some website visualization problem
+  let imgExcludeContrastFilter = invert ? ' contrast(0.80) brightness(1.10); border-radius: 5px;' : ''; // this compensate some website visualization problem
 
   let bodyTextShadow = !invert ? '' : 'body{text-shadow: 0px 0px 3px rgba(0,0,0,0.35); -webkit-text-stroke-width: 0.2px; -webkit-text-stroke-color: rgba(255,255,255,0.4);}'; //Difficult choice... what I'm doing?
 
@@ -209,7 +209,7 @@ function getInvertStyle(invert){
   }
   
   img{
-    -webkit-filter: `+ strFilters + ' ' + excludeContrastFilter +`;
+    -webkit-filter: `+ strFilters + ' ' + imgExcludeContrastFilter +`;
   } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
   
   // return final style
