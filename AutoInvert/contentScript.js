@@ -72,8 +72,8 @@ const emptyChars = [' ', '\r', '\n', '\t'];
 function clearParentsExceptions(el){
   while(el = el.parentElement){
     if(el.hasAttribute(alreadyCheckedElement)){ //todo: maybe better to remove it
-      node.classList.remove(invertExceptionClass); 	  
-	}
+      el.classList.remove(invertExceptionClass); 	  
+	  }
   }
 }
 
