@@ -216,6 +216,7 @@ function getInvertStyle(invert){
   
   img{
     -webkit-filter: `+ strFilters + ' ' + imgExcludeContrastFilter +`;
+    background-color: rgba(127,127,127,1);
   } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
   
   // return final style
