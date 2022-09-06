@@ -101,7 +101,8 @@ function exceptionsFinder(){
       // go go go!
       if(possibleEl){
 
-        let hasBackgroundImage = (node.getAttribute("style")||'').includes("background-image")
+        let elStyle = (node.getAttribute("style")||'').replaceAll(' ','');
+        let hasBackgroundImage = elStyle.includes("background-image:url(")
 
         if(!hasBackgroundImage){
           let classList = [...node.classList];
@@ -116,8 +117,10 @@ function exceptionsFinder(){
               style = classes[cssClass] = getComputedStyle(elem);
             }  
 
-            if(style && style.getPropertyValue('background-image') != 'none'){
-              hasBackgroundImage = true;
+            let backgroundImage = '';
+            if(style && (backgroundImage = style.getPropertyValue('background-image'))){
+              backgroundImage = backgroundImage.replaceAll(' ','');
+              hasBackgroundImage = backgroundImage.startsWith('url(');
               break;
             }
           }
@@ -216,7 +219,7 @@ function getInvertStyle(invert){
   
   img{
     -webkit-filter: `+ strFilters + ' ' + imgExcludeContrastFilter +`;
-    background-color: rgba(127,127,127,1);
+    backdrop-filter: invert(0);
   } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
   
   // return final style
