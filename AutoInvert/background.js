@@ -104,13 +104,16 @@ chrome.tabs.onUpdated.addListener(
 	function (tabId, changeInfo, tab) {
 		console.info("currTabUpdated", changeInfo, tab);
 
-		chrome.tabs.sendMessage(tab.id, {
-			message: 'invert!',
-			status: 'update',
-		});
-
-		let myTab = extractPersonalTabObj(tab);
-		execInvert(myTab);			
+		if(tab.status == 'complete'){
+			chrome.tabs.sendMessage(tab.id, {
+				message: 'invert!',
+				status: 'update',
+			});
+		
+			let myTab = extractPersonalTabObj(tab);
+			execInvert(myTab);			
+		}
+		// else chrome.scripting.insertCSS({target: {tabId: tab.id}, files: ["inject.css"]});
 	}
 );
 
