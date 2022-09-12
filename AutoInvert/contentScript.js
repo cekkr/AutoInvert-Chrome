@@ -219,7 +219,7 @@ function getInvertStyle(invert){
   
   img{
     -webkit-filter: `+ strFilters + ' ' + imgExcludeContrastFilter +`;
-    backdrop-filter: invert(0);
+    backdrop-filter: invert(`+(invert?1:0)+`);
   } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
   
   // return final style

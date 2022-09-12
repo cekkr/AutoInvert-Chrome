@@ -1,0 +1,2 @@
+- invertException don't deactivated when toggled
+- no invert until the end of the page load
