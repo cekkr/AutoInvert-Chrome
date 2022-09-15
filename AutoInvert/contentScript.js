@@ -20,7 +20,7 @@ function isAlphaNumeric(str) {
 
 class WaitMoment{
   constructor(waitMs, callback) {
-    this.waitMs = callback;
+    this.waitMs = waitMs;
     this.callback = callback; 
   }
 
