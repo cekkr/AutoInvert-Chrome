@@ -206,7 +206,7 @@ function getInvertStyle(invert){
   let style = `
   html { 
     -webkit-filter: `+strFilters +`; 
-    background-color:white;
+    ` + (invert ? 'background-color:white;' : '') + `
   } 
 
   `+ bodyTextShadow +`

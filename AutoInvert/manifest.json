@@ -10,7 +10,7 @@
     ],
    "action": {
       "default_icon": "images/off.png",
-      "default_title": "Toggle AutoInvert"
+      "default_title": "Toggle AutoInvert!"
    },
    "description": "Invert websites brightness in every tab of the website where it's active to reduce strain on eyes and improve readability at night!",
    "icons": {
@@ -18,7 +18,7 @@
       "48": "images/icon48.png"
    },
    "manifest_version": 3,
-   "name": "AutoInvert",
+   "name": "Auto Invert!",
    "permissions": [ 
       "activeTab",
       "storage"
