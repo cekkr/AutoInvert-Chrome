@@ -215,9 +215,10 @@ function getInvertStyle(invert){
   ` // excluded elements (inverted twice => not inverted)
   +exclude.join(', ')+` {
     -webkit-filter: `+ strFilters + `;
-  }
+  }`;
   
-  img{
+
+  if(invert) style += `\r\nimg{
     -webkit-filter: `+ strFilters + ' ' + imgExcludeContrastFilter +`;
     backdrop-filter: invert(`+(invert?1:0)+`);
   } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
