@@ -189,6 +189,7 @@ function getInvertStyle(invert){
 
   filters.push("invert("+(invert?100:0)+"%)");
   filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
+  filters.push("contrast("+(invert?0.9:1)+")");
 
   let strFilters = filters.join(" ");
 
@@ -198,7 +199,7 @@ function getInvertStyle(invert){
   // Should set background to HTML?
   // background-color: white;
 
-  let imgExcludeContrastFilter = invert ? ' contrast(0.80) brightness(1.10); border-radius: 5px;' : ''; // this compensate some website visualization problem
+  let imgExcludeContrastFilter = invert ? 'contrast(1.1); border-radius: 5px;' : ''; // this compensate some website visualization problem (removed 'contrast(0.80) brightness(1.10)')
   let bodyTextShadow = !invert ? '' : 'body{text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.75); -webkit-text-stroke-width: 0.25px; -webkit-text-stroke-color: rgba(0,0,0, 0.75);}'; //Difficult choice... what I'm doing?
 
   //study this exception (math formula) https://en.wikipedia.org/wiki/Beam_splitter
