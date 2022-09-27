@@ -14,7 +14,7 @@
          "all_frames": false,
          "js": ["contentScript.js"]
       }
-    ],
+   ],
    "action": {
       "default_icon": "images/off.png",
       "default_title": "Toggle Auto Invert!"
