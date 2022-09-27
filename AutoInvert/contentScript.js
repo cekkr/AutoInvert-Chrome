@@ -233,54 +233,61 @@ function getInvertStyle(invert){
 
 const inverterStyleId = "extAutoInverterRunning";
 
+function invertCmd(toggle){
+  let action = false;
+  autoInvertToogle = toggle;
+
+  var style = document.getElementById(inverterStyleId);
+  if (!style) {
+      style = document.createElement("style");
+      style.type = "text/css";
+      style.id = inverterStyleId;
+      style.innerHTML = getInvertStyle();
+      document.head.append(style);
+
+      action = true;
+  }
+  else {
+    let styleToggle = style.getAttribute('autoInvert') == 'true' ? true : false;
+    
+    if(autoInvertToogle != styleToggle){
+      style.innerHTML = getInvertStyle();
+
+      action = true;
+    } 
+  }
+
+  if(action){    
+    style.setAttribute("autoInvert", autoInvertToogle);
+
+    if(autoInvertToogle){
+      waitForExceptionsFinder.tick();
+      observer.observe(targetNode, config);
+    }
+    else{
+      observer.disconnect();
+    }
+  }
+
+  return action;
+}
+
 chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
+  function(request, sender, sendResponse) {
 
-      // listen for messages sent from background.js    
-      if (request.message === 'invert!') {        
+    // listen for messages sent from background.js    
+    if (request.message === 'invert!') {        
 
-        if(request.status == 'update'){
-          waitForExceptionsFinder.tick();
-          return;
-        }
-
-        var action = false;
-
-        autoInvertToogle = request.toggle;
-
-        var style = document.getElementById(inverterStyleId);
-        if (!style) {
-            style = document.createElement("style");
-            style.type = "text/css";
-            style.id = inverterStyleId;
-            style.innerHTML = getInvertStyle();
-            document.head.append(style);
-
-            action = true;
-        }
-        else {
-          let styleToggle = style.getAttribute('autoInvert') == 'true' ? true : false;
-          
-          if(autoInvertToogle != styleToggle){
-            style.innerHTML = getInvertStyle();
-
-            action = true;
-          } 
-        }
-
-        if(action){
-          console.info("AutoInvert extension action", request);
-          style.setAttribute("autoInvert", autoInvertToogle);
-
-          if(autoInvertToogle){
-            waitForExceptionsFinder.tick();
-            observer.observe(targetNode, config);
-          }
-          else{
-            observer.disconnect();
-          }
-        }
+      if(request.status == 'update'){
+        waitForExceptionsFinder.tick();
+        return;
+      }
+      
+      if(invertCmd(request.toggle)){
+        console.info("AutoInvert extension action", request);
       }
 
       //sendResponse(true); // everythin fine broh
-  });
+    }
+  }
+);
