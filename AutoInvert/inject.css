@@ -1,7 +1,25 @@
-html{
-    background-color: gray;
+html:not([aiLoaded]){
+    background-color: black;
 }
 
-body{
-    opacity: 0;
+body:not([aiLoaded]){
+    opacity: 0.4;
+}
+
+html:is([aiLoaded]){
+    transition: background-color 0.3s;
+    transition-delay: 0.1s;
+}
+
+body:is([aiLoaded]){
+    transition: opacity 0.3s;
+    transition-delay: 0.1s;
+}
+
+html {
+    transition: filter 0.5s;
+}
+
+html, body{
+    transition-timing-function: ease;
 }

@@ -164,6 +164,7 @@ let waitForExceptionsFinder = new WaitMoment(30, ()=>{
 });
 
 // Select the node that will be observed for mutations
+const html = document.querySelector('html');
 const targetNode = document.querySelector('body');
 
 // Options for the observer (which mutations to observe)
@@ -261,8 +262,8 @@ function invertCmd(toggle){
     style.setAttribute("autoInvert", autoInvertToogle);
 
     if(autoInvertToogle){
-      waitForExceptionsFinder.tick();
-      observer.observe(targetNode, config);
+        waitForExceptionsFinder.tick();
+        observer.observe(targetNode, config);
     }
     else{
       observer.disconnect();
@@ -270,6 +271,11 @@ function invertCmd(toggle){
   }
 
   return action;
+}
+
+function aiLoaded(){
+  html.setAttribute("aiLoaded", true);
+  targetNode.setAttribute("aiLoaded", true);
 }
 
 chrome.runtime.onMessage.addListener(
@@ -283,11 +289,17 @@ chrome.runtime.onMessage.addListener(
         return;
       }
       
-      if(invertCmd(request.toggle)){
+      if(invertCmd(request.toggle)){        
         console.info("AutoInvert extension action", request);
-      }
+      }      
 
+      aiLoaded();
+      
       //sendResponse(true); // everythin fine broh
     }
   }
 );
+
+window.addEventListener("load", ()=>{
+  aiLoaded();
+});
