@@ -283,6 +283,7 @@ function aiLoaded(){
   if(body) body.setAttribute("aiLoaded", true);
 }
 
+let firstCall = false;
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
 
@@ -290,12 +291,15 @@ chrome.runtime.onMessage.addListener(
     if (request.message === 'invert!') {        
 
       if(request.status == 'update'){
-        waitForExceptionsFinder.tick();
-        return;
+        if(!firstCall){
+          waitForExceptionsFinder.tick();
+          return;
+        }
       }
       
       if(invertCmd(request.toggle)){        
         console.info("AutoInvert extension action", request);
+        firstCall = true;
       }      
 
       aiLoaded();
