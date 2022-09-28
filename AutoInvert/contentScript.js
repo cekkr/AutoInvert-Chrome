@@ -161,11 +161,14 @@ function exceptionsFinder(){
 
 let waitForExceptionsFinder = new WaitMoment(30, ()=>{
   exceptionsFinder();
+
+  // GitHub exception
+  if(tabLoaded)
+    aiLoaded();
 });
 
 // Select the node that will be observed for mutations
-let html = document.querySelector('html');
-let targetNode = document.querySelector('body');
+let targetNode = document.querySelector('html');
 
 // Options for the observer (which mutations to observe)
 const config = { attributes: false, childList: true, subtree: true };
@@ -274,11 +277,10 @@ function invertCmd(toggle){
 }
 
 function aiLoaded(){
-  html = document.querySelector('html');
-  targetNode = document.querySelector('body');
+  let body = document.querySelector('body');
 
-  html.setAttribute("aiLoaded", true);
   targetNode.setAttribute("aiLoaded", true);
+  if(body) body.setAttribute("aiLoaded", true);
 }
 
 chrome.runtime.onMessage.addListener(
@@ -303,8 +305,8 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
+let tabLoaded = false;
 window.addEventListener("load", ()=>{
-  setInterval(()=>{
-    aiLoaded();
-  }, 1000);
+  tabLoaded = true;
+  aiLoaded();
 });
