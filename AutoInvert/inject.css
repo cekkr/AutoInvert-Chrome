@@ -7,17 +7,13 @@ body:not([aiLoaded]){
 }
 
 html:is([aiLoaded]){
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, filter 0.5s;
     transition-delay: 0.1s;
 }
 
 body:is([aiLoaded]){
     transition: opacity 0.3s;
     transition-delay: 0.1s;
-}
-
-html {
-    transition: filter 0.5s;
 }
 
 html, body{
