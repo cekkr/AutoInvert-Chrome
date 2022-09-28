@@ -202,7 +202,7 @@ function getInvertStyle(invert){
   // background-color: white;
 
   let imgExcludeContrastFilter = invert ? 'contrast(1.1); border-radius: 5px;' : ''; // this compensate some website visualization problem (removed 'contrast(0.80) brightness(1.10)')
-  let bodyTextShadow = invert ? 'body{text-shadow: 0px 0px 1px rgba(0, 0, 0, 1);} a{ color:black !important; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
+  let bodyTextShadow = invert ? 'body{text-shadow: 0px 0px 1px rgba(0, 0, 0, 1);} a{ color: #031d38 !important; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
 
   let style = `
   html { 
