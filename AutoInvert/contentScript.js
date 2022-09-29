@@ -54,7 +54,7 @@ exclude.push('.'+invertExceptionClass);
 /*for(let el of applyBackgroundExceptionOnElements)
   exclude.push(el + '[style*="background-image"]:empty');*/ // leave it to exceptionsFinder function
 
-//exclude.push('img'); // directly handled in the CSS
+exclude.push('img'); // directly handled in the CSS
 exclude.push('video');
 exclude.push('iframe');
 
@@ -192,13 +192,23 @@ function getInvertStyle(invert){
 
   // Calculate filters
   let filters = [];
-
-  if(invert) filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, 0.9))")
-  filters.push("invert("+(invert?100:0)+"%)");
+  filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, "+(invert?0.9:0)+"))")
+  filters.push("invert("+(invert?1:0)+")");
   filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
-  filters.push("contrast("+(invert?0.9:1)+")");
-
+  filters.push("contrast("+(invert?1.1:1)+")");
+  //filters.push("brightness("+(invert?1.05:1)+")");
   let strFilters = filters.join(" ");
+
+  let exclFilters = [];
+  exclFilters.push("invert("+(invert?1:0)+")");
+  exclFilters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
+  exclFilters.push("contrast("+(invert?1.25:1)+")");
+  exclFilters.push("brightness("+(invert?1.15:1)+")");
+  let strExclFilters = exclFilters.join(" ");
+
+  filters.splice(3);
+  filters.push("blur(2px)");
+  let strExclBackFilter = invert ? filters.join(" ") : '';
 
   // the background-color it's experimental method for handling certain websites that uses default background color
   // iframe are simply ignored, for the moment...
@@ -206,13 +216,14 @@ function getInvertStyle(invert){
   // Should set background to HTML?
   // background-color: white;
 
-  let imgExcludeContrastFilter = invert ? 'contrast(1.1); border-radius: 5px;' : ''; // this compensate some website visualization problem (removed 'contrast(0.80) brightness(1.10)')
+  //let imgExcludeContrastFilter = invert ? 'contrast(1.1); ' : ''; // this compensate some     website visualization problem (removed 'contrast(0.80) brightness(1.10)')
   let bodyTextShadow = invert ? 'body{text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);} a{ /*color: #031d38;*/ -webkit-text-stroke: 0.25px black; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
 
   let style = `
   html { 
     -webkit-filter: `+strFilters +`; 
     ` + (invert ? 'background-color:white;' : '') + `
+    transition: -webkit-filter 0.3s;
   } 
 
   `+ bodyTextShadow +`
@@ -220,13 +231,14 @@ function getInvertStyle(invert){
   /* Excluded elements */
   ` // excluded elements (inverted twice => not inverted)
   +exclude.join(', ')+` {
-    -webkit-filter: `+ strFilters + `;
+    backdrop-filter: `+ strExclBackFilter +`;
+    -webkit-filter: `+ strExclFilters  +`; 
+    transition-duration: 0.3s;
   }`;
   
 
   if(invert) style += `\r\nimg{
-    -webkit-filter: `+ strFilters + ' ' + imgExcludeContrastFilter +`;
-    backdrop-filter: invert(1) hue-rotate(180deg);
+    border-radius: 5px;
   } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
   
   // return final style
