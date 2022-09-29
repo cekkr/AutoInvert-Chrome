@@ -191,7 +191,7 @@ function getInvertStyle(invert){
   // Calculate filters
   let filters = [];
 
-  if(invert) filters.push("drop-shadow(0px 0px 4px rgba(0,0,0,0.5))")
+  if(invert) filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, 0.5))")
   filters.push("invert("+(invert?100:0)+"%)");
   filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
   filters.push("contrast("+(invert?0.9:1)+")");
@@ -205,7 +205,7 @@ function getInvertStyle(invert){
   // background-color: white;
 
   let imgExcludeContrastFilter = invert ? 'contrast(1.1); border-radius: 5px;' : ''; // this compensate some website visualization problem (removed 'contrast(0.80) brightness(1.10)')
-  let bodyTextShadow = invert ? 'body{text-shadow: 0px 0px 1px rgba(0, 0, 0, 1);} a{ /*color: #031d38;*/ -webkit-text-stroke: 0.25px black; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
+  let bodyTextShadow = invert ? 'body{text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);} a{ /*color: #031d38;*/ -webkit-text-stroke: 0.25px black; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
 
   let style = `
   html { 
