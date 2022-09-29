@@ -188,6 +188,8 @@ const observer = new MutationObserver(callback);
 function getInvertStyle(invert){
   invert = invert || autoInvertToogle; // temporary for better days...
 
+  //if(!invert) return ''; //try this way
+
   // Calculate filters
   let filters = [];
 
@@ -224,7 +226,7 @@ function getInvertStyle(invert){
 
   if(invert) style += `\r\nimg{
     -webkit-filter: `+ strFilters + ' ' + imgExcludeContrastFilter +`;
-    backdrop-filter: invert(`+(invert?1:0)+`);
+    backdrop-filter: invert(1) hue-rotate(180deg);
   } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
   
   // return final style
