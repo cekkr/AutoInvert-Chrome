@@ -6,8 +6,9 @@ body:not([aiLoaded]){
     opacity: 0.4;
 }
 
-html:is([aiLoaded]){
+html:is([aiLoaded]){    
     transition: background-color 0.6s, filter 0.4s;
+    background-color: white;
 }
 
 body:is([aiLoaded]){
@@ -16,4 +17,5 @@ body:is([aiLoaded]){
 
 html, body{
     transition-timing-function: ease;
+    transition-duration: 0.3s;    
 }

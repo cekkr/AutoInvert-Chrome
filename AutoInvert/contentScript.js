@@ -222,7 +222,6 @@ function getInvertStyle(invert){
   let style = `
   html { 
     -webkit-filter: `+strFilters +`; 
-    ` + (invert ? 'background-color:white;' : '') + `
     transition: -webkit-filter 0.3s;
   } 
 
