@@ -44,7 +44,8 @@ class WaitMoment{
 ///
 const invertExceptionClass = "autoInvertException";
 const alreadyCheckedElement = "autoInvertChecked";
-const applyBackgroundExceptionOnElements = ['div', 'figure'];
+const applyBackgroundExceptionOnElements = ['div', 'figure', 'a'];
+const dontCheckContentOn = ['a', 'figure'];
 
 const exclude = []; 
 
@@ -72,7 +73,7 @@ const emptyChars = [' ', '\r', '\n', '\t'];
 function clearParentsExceptions(el){
   while(el = el.parentElement){
     if(el.hasAttribute(alreadyCheckedElement)){ //todo: maybe better to remove it
-      el.classList.remove(invertExceptionClass); 	  
+      el.removeAttribute(invertExceptionClass); 	  
 	  }
   }
 }
@@ -81,6 +82,8 @@ let classes = {};
 
 function exceptionsFinder(){
   for(let el of applyBackgroundExceptionOnElements){
+    let checkContent = !dontCheckContentOn.includes(el);
+
     //tothink: a more efficient way for collecting elements to invert
     let emptyBackgrounds = [...document.querySelectorAll(el)]; // +':not(.'+alreadyCheckedElement+')'+':not([style*="background-image"]:empty)
     
@@ -89,20 +92,23 @@ function exceptionsFinder(){
       let possibleEl = !node.hasAttribute(alreadyCheckedElement);
 
       // check if contains excluded elements
-      if(possibleEl){
+      /*if(possibleEl){
         for(let excl of exclude){
-          if(node.querySelector(excl)){
+          if($(node.querySelector(excl)).is(":visible")){
             possibleEl = false;
             break;
           }
         }
-      }
+      }*/
 
       // go go go!
       if(possibleEl){
 
         let elStyle = (node.getAttribute("style")||'').replaceAll(' ','');
         let hasBackgroundImage = elStyle.includes("background-image:url(")
+
+        /*if(elStyle.includes("background-image"))
+          console.log(el, "contains background", hasBackgroundImage);*/
 
         if(!hasBackgroundImage){
           let classList = [...node.classList];
@@ -126,17 +132,19 @@ function exceptionsFinder(){
           }
         }
 
-        if(hasBackgroundImage){
-          let text = node.innerText;
-
+        if(hasBackgroundImage){          
           let isEmpty = true;
 
-          for(let c in text){
-            const ch = text[c];
+          if(checkContent){
+            let text = node.innerText;
 
-            if(emptyChars.indexOf(ch)<0){  // Check if there are just useless char
-              isEmpty = false;
-              break;
+            for(let c in text){
+              const ch = text[c];
+
+              if(emptyChars.indexOf(ch)<0){  // Check if there are just useless char
+                isEmpty = false;
+                break;
+              }
             }
           }
 
@@ -152,6 +160,42 @@ function exceptionsFinder(){
       }
     });
   }
+
+  ///
+  /// Space-temporal exception paradox finder
+  ///
+
+  function parentIsExcluded($el){
+
+    while(($el = $el.parent()) && $el.length > 0){    
+      for(let excl of exclude){
+        if($el.is(excl))
+          return $el;
+      }    
+    }
+
+    return false;
+  }
+
+  let exEls = $(exclude.join(','));
+  exEls.each(function() {
+    let $el = $(this);    
+
+    let parExcl = parentIsExcluded($el);
+    if(parExcl){
+
+      if($el.hasClass(invertExceptionClass)){ 
+        $el.removeClass(invertExceptionClass);
+      }
+      else {
+        let parent = $el.parent();
+        if(parent != parExcl)
+          parent.addClass(invertExceptionClass);
+        else
+          $el.addClass("imposeZeroFilter");
+      }
+    }
+  }); 
 }
 
 ///
@@ -192,7 +236,7 @@ function getInvertStyle(invert){
 
   // Calculate filters
   let filters = [];
-  filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, "+(invert?0.9:0)+"))")
+  filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, "+(invert?0.90:0)+"))")
   filters.push("invert("+(invert?1:0)+")");
   filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
   filters.push("contrast("+(invert?0.95:1)+")");
@@ -202,12 +246,13 @@ function getInvertStyle(invert){
   let exclFilters = [];
   exclFilters.push("invert("+(invert?1:0)+")");
   exclFilters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
-  exclFilters.push("contrast("+(invert?1.25:1)+")");
-  exclFilters.push("brightness("+(invert?1.15:1)+")");
+  exclFilters.push("contrast("+(invert?1.2:1)+")");
+  exclFilters.push("brightness("+(invert?1.1:1)+")");
   let strExclFilters = exclFilters.join(" ");
 
   filters.splice(3);
   filters.push("blur(2px)");
+  filters.push("contrast(0.85)");
   let strExclBackFilter = invert ? filters.join(" ") : '';
 
   // the background-color it's experimental method for handling certain websites that uses default background color
@@ -217,7 +262,7 @@ function getInvertStyle(invert){
   // background-color: white;
 
   //let imgExcludeContrastFilter = invert ? 'contrast(1.1); ' : ''; // this compensate some     website visualization problem (removed 'contrast(0.80) brightness(1.10)')
-  let bodyTextShadow = invert ? 'body{text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);} a{ /*color: #031d38;*/ -webkit-text-stroke: 0.25px black; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
+  let bodyTextShadow = invert ? 'body{text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);} a{ /*color: #031d38;*/ -webkit-text-stroke: 0.25px black; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
 
   let style = `
   html { 
@@ -230,7 +275,7 @@ function getInvertStyle(invert){
   /* Excluded elements */
   ` // excluded elements (inverted twice => not inverted)
   +exclude.join(', ')+` {
-    backdrop-filter: `+ strExclBackFilter +`;
+    /*backdrop-filter: `+ strExclBackFilter +`;*/
     -webkit-filter: `+ strExclFilters  +`; 
     transition-duration: 0.3s;
   }`;
