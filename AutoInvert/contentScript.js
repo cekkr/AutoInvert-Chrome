@@ -191,7 +191,7 @@ function getInvertStyle(invert){
   // Calculate filters
   let filters = [];
 
-  if(invert) filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, 0.5))")
+  if(invert) filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, 0.9))")
   filters.push("invert("+(invert?100:0)+"%)");
   filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
   filters.push("contrast("+(invert?0.9:1)+")");
