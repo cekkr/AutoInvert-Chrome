@@ -419,6 +419,9 @@ function getInvertStyle(invert){
       /*color: #031d38;*/ 
       -webkit-text-stroke: 0.25px rgba(0,0,0,0.5); 
       text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);
+      
+      box-shadow: 0px 0px 10px rgba(127, 127, 127, 0.25);
+      border-radius: 5px;
     }
 
     /* Excluded elements */
