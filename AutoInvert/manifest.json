@@ -32,7 +32,7 @@
       "storage"
    ],
    "host_permissions": ["<all_urls>"],
-   "version": "1.0.95",
+   "version": "1.0.97",
    "author": "cekkr",
    "homepage_url": "https://github.com/cekkr/autoinvert-chrome"
 }
