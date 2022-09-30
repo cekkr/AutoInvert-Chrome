@@ -82,16 +82,17 @@ function clearParentsExceptions(el){
 /// Canvas and images analyzing
 ///
 function analyzeContext($el, ctx){
+  $el.attr('aiAnalyzed', true); 
+
   let el = $el[0];
   
-  const pixelsPerIncrement = 100;
+  const pixelsPerIncrement = 50;
   let increment = Math.round(((el.width + el.height)/2)/pixelsPerIncrement) || 1;    
 
-  const round = 4;
+  let diffs = {};
+  const round = 1;
   let avgs = {};
-  //let diffs = {};
-
-  const maxShades = 3;
+  let totPixels = 0;
 
   for(let x=0; x<el.width; x+=increment){
     for(let y=0; y<el.height; y+=increment){
@@ -102,10 +103,12 @@ function analyzeContext($el, ctx){
         let diff = (Math.abs(avg-p[0])+Math.abs(avg-p[1])+Math.abs(avg-p[2]))/3;
 
         let iavg = Math.round(avg/round);
-        let idiff = Math.round(diff);
+        let idiff = Math.round(diff/round);
 
         let arr = avgs[iavg] = avgs[iavg] || {};
-        arr[idiff] = (arr[idiff] || 0)+1;
+        arr['totPixels'] = (arr['totPixels'] || 0) + 1;
+        arr[idiff] = (arr[idiff] || 0)+1;        
+        totPixels++;
 
         //diffs[idiff] = (diffs[idiff] || 0)+1;
       }
@@ -114,33 +117,46 @@ function analyzeContext($el, ctx){
 
   let indexes = Object.keys(avgs);
   let indexesLen = indexes.length;
-  //let numDiffs = Object.keys(diffs).length;
+
+  let numDiffs = Object.keys(diffs).length;
 
   let justInvert = true;
 
+  const maxShades = 3;
   if(indexesLen > maxShades){ 
     justInvert = false;
   }
   else {
-    const minMix = 16;
+    const minMix = 0.01; //it works, even if i don't know why. Hey, but it works.
+
     let totMix = 0;
+    let totMixPower = 0;
 
     for(let a in avgs){
       let avg = avgs[a];
       let avgDiffs = Object.keys(avg);
 
       let avgMix = 0;
+      let avgTot = 1;
       for(let d of avgDiffs){
-        avgMix += d;
+        if(isNaN(d))
+          avgTot = avg[d];
+        else  
+          avgMix += 255-d;
       }
-      avgMix /= avgDiffs.length;
 
-      totMix += avgMix;
+      totMix += avgDiffs.length;
+
+      avgMix /= avgTot;
+      totMixPower += avgMix;
     } 
-    totMix /= indexesLen;
 
-    console.log('totMix', totMix, el);
-    if(totMix < minMix)
+    totMixPower /= totPixels;
+    let variety = totMix * totMixPower;    
+
+    console.log('totMix', totMixPower, variety, el);
+
+    if(variety < minMix && variety != 0)
       justInvert = false;
   }
 
@@ -151,9 +167,7 @@ function analyzeContext($el, ctx){
   else{
     if($el.is('canvas'))
       $el.addClass(invertExceptionClass);
-  }
-
-  $el.attr('aiAnalyzed', true);    
+  }     
 
   // console.log('avgs', avgs, el);
 }
@@ -374,6 +388,16 @@ function getInvertStyle(invert){
 
   let invertCss = invert ? 'html {background-color:white} body{text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);} a{ /*color: #031d38;*/ -webkit-text-stroke: 0.25px black; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
 
+  let curExclude = [...exclude];
+  for(var e in curExclude){
+    curExclude[e] += ':not(.imposeZeroFilter)';
+  }
+  
+  let curExcludeHover = [...exclude];
+  for(var e in curExcludeHover){
+    curExcludeHover[e] += '.imposeZeroFilter::hover';
+  }
+  
   let style = `
     html { 
       -webkit-filter: `+strFilters +`; 
@@ -397,11 +421,18 @@ function getInvertStyle(invert){
 
     /* Excluded elements */
     ` // excluded elements (inverted twice => not inverted)
-    +exclude.join(', ')+` {
+    +curExclude.join(', ')+` {
       /*backdrop-filter: `+ strExclBackFilter +`;*/
       -webkit-filter: `+ strExclFilters  +`; 
 
       transition-duration: 0.3s;
+    }
+
+    /* Doesn't works */
+    `+curExcludeHover.join(', ')+` {
+      backdrop-filter: invert(0) drop-shadow(0,0, 3px, rgb(127,127,127)) !important;
+      transition-duration: 0.3s;
+      -webkit-filter: `+ strExclFilters  +` !important; 
     }
 
     img{
