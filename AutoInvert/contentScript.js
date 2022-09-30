@@ -389,8 +389,6 @@ function getInvertStyle(invert){
   filters.push("contrast(0.85)");
   let strExclBackFilter = invert ? filters.join(" ") : '';
 
-  let invertCss = invert ? 'html {background-color:white} body{text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);} a{ /*color: #031d38;*/ -webkit-text-stroke: 0.25px black; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
-
   let curExclude = [...exclude];
   for(var e in curExclude){
     curExclude[e] += ':not(.imposeZeroFilter)';
@@ -419,7 +417,8 @@ function getInvertStyle(invert){
     
     a { 
       /*color: #031d38;*/ 
-      -webkit-text-stroke: 0.25px black; 
+      -webkit-text-stroke: 0.25px rgba(0,0,0,0.5); 
+      text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);
     }
 
     /* Excluded elements */
