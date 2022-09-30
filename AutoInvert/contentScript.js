@@ -86,7 +86,7 @@ function analyzeContext($el, ctx){
 
   let el = $el[0];
   
-  const pixelsPerIncrement = 50;
+  const pixelsPerIncrement = 30;
   let increment = Math.round(((el.width + el.height)/2)/pixelsPerIncrement) || 1;    
 
   let diffs = {};
@@ -154,7 +154,7 @@ function analyzeContext($el, ctx){
     totMixPower /= totPixels;
     let variety = totMix * totMixPower;    
 
-    console.log('totMix', totMixPower, variety, el);
+    //console.log('totMix', totMixPower, variety, el);
 
     if(variety < minMix && variety != 0)
       justInvert = false;
@@ -395,7 +395,7 @@ function getInvertStyle(invert){
   
   let curExcludeHover = [...exclude];
   for(var e in curExcludeHover){
-    curExcludeHover[e] += '.imposeZeroFilter::hover';
+    curExcludeHover[e] += '.imposeZeroFilter:hover';
   }
   
   let style = `
@@ -428,10 +428,10 @@ function getInvertStyle(invert){
       transition-duration: 0.3s;
     }
 
-    /* Doesn't works */
+    /* Normalize an inverted image when mouse is over it */
     `+curExcludeHover.join(', ')+` {
-      backdrop-filter: invert(0) drop-shadow(0,0, 3px, rgb(127,127,127)) !important;
       transition-duration: 0.3s;
+      backdrop-filter: invert(0) drop-shadow(0,0, 3px, rgb(127,127,127)) !important;      
       -webkit-filter: `+ strExclFilters  +` !important; 
     }
 
