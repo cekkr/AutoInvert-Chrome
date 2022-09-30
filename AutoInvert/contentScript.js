@@ -89,36 +89,39 @@ function analyzeContext($el, ctx){
   const pixelsPerIncrement = 30;
   let increment = Math.round(((el.width + el.height)/2)/pixelsPerIncrement) || 1;    
 
-  let diffs = {};
   const round = 1;
+
   let avgs = {};
   let totPixels = 0;
 
-  for(let x=0; x<el.width; x+=increment){
-    for(let y=0; y<el.height; y+=increment){
-      let p = ctx.getImageData(x, y, 1, 1).data; 
+  try{
+    for(let x=0; x<el.width; x+=increment){
+      for(let y=0; y<el.height; y+=increment){
+        let p = ctx.getImageData(x, y, 1, 1).data; 
 
-      if(p[3]>250){
-        let avg = (p[0]+p[1]+p[2])/3;
-        let diff = (Math.abs(avg-p[0])+Math.abs(avg-p[1])+Math.abs(avg-p[2]))/3;
+        if(p[3]>250){
+          let avg = (p[0]+p[1]+p[2])/3;
+          let diff = (Math.abs(avg-p[0])+Math.abs(avg-p[1])+Math.abs(avg-p[2]))/3;
 
-        let iavg = Math.round(avg/round);
-        let idiff = Math.round(diff/round);
+          let iavg = Math.round(avg/round);
+          let idiff = Math.round(diff/round);
 
-        let arr = avgs[iavg] = avgs[iavg] || {};
-        arr['totPixels'] = (arr['totPixels'] || 0) + 1;
-        arr[idiff] = (arr[idiff] || 0)+1;        
-        totPixels++;
+          let arr = avgs[iavg] = avgs[iavg] || {};
+          arr['totPixels'] = (arr['totPixels'] || 0) + 1;
+          arr[idiff] = (arr[idiff] || 0)+1;        
+          totPixels++;
 
-        //diffs[idiff] = (diffs[idiff] || 0)+1;
+          //diffs[idiff] = (diffs[idiff] || 0)+1;
+        }
       }
     }
+  }
+  catch {
+    return;
   }
 
   let indexes = Object.keys(avgs);
   let indexesLen = indexes.length;
-
-  let numDiffs = Object.keys(diffs).length;
 
   let justInvert = true;
 
