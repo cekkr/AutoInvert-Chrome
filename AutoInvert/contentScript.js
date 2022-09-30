@@ -373,20 +373,23 @@ function getInvertStyle(invert){
   filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, "+(invert?0.90:0)+"))")
   filters.push("invert("+(invert?1:0)+")");
   filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
-  filters.push("contrast("+(invert?0.95:1)+")");
-  //filters.push("brightness("+(invert?1.05:1)+")");
+  filters.push("contrast("+(invert?1.05:1)+")");
+  filters.push("brightness("+(invert?0.95:1)+")");
   let strFilters = filters.join(" ");
 
   let exclFilters = [];
   exclFilters.push("invert("+(invert?1:0)+")");
   exclFilters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
-  exclFilters.push("contrast("+(invert?1.2:1)+")");
+  exclFilters.push("contrast("+(invert?1.15:1)+")");
   exclFilters.push("brightness("+(invert?1.1:1)+")");
+  //exclFilters.push("drop-shadow(0px,0px, 4px, rgba(0,0,0, 1))");
+  exclFilters.push("drop-shadow(0px 0px 4px #000000)");
   let strExclFilters = exclFilters.join(" ");
 
   filters.splice(3);
-  filters.push("blur(2px)");
-  filters.push("contrast(0.85)");
+  //filters.push("blur(2px)");
+  filters.push("contrast(1.05)");
+  filters.push("drop-shadow(0px 0px 3px rgba(127,127,127,0.5))");
   let strExclBackFilter = invert ? filters.join(" ") : '';
 
   let curExclude = [...exclude];
@@ -412,33 +415,43 @@ function getInvertStyle(invert){
     } 
     
     body {
-      text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);
+      -webkit-text-stroke: 0.5pt rgba(0,0,0,0.25);
+      text-shadow: 0px 0px 1px rgba(0, 0, 0, 1), 0px 0px 2px rgba(127, 127, 127, 0.75);
     } 
     
-    a { 
+    a, button { 
       /*color: #031d38;*/ 
-      -webkit-text-stroke: 0.25px rgba(0,0,0,0.5); 
-      text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);
-
+       
       box-shadow: 0px 0px 10px rgba(127, 127, 127, 0.1);
-      padding:3px;
+
+      -webkit-text-stroke: 0.5pt rgba(0,0,0,0.25);
+      text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(127, 127, 127, 0.75);
+      
       border-radius: 5px;
+    }
+
+    a:hover, button:hover { 
+      transition-duration: 0.3s;
+      text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(0, 0, 0, 0.75),  0px 0px 3px rgba(127, 127, 127, 0.75);
+    }
+
+    a > img {
+      padding:2pt;
     }
 
     /* Excluded elements */
     ` // excluded elements (inverted twice => not inverted)
     +curExclude.join(', ')+` {
-      /*backdrop-filter: `+ strExclBackFilter +`;*/
-      -webkit-filter: `+ strExclFilters  +`; 
+      /*backdrop-filter: `+ strExclBackFilter +`;*/    
 
+      -webkit-filter: `+ strExclFilters  +`; 
       transition-duration: 0.3s;
     }
 
     /* Normalize an inverted image when mouse is over it */
     `+curExcludeHover.join(', ')+` {
       transition-duration: 0.3s;
-      backdrop-filter: invert(0) drop-shadow(0,0, 3px, rgb(127,127,127)) !important;      
-      -webkit-filter: `+ strExclFilters  +` !important; 
+      -webkit-filter: `+ strExclBackFilter  +` !important; 
     }
 
     img{
