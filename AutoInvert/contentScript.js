@@ -78,6 +78,115 @@ function clearParentsExceptions(el){
   }
 }
 
+///
+/// Canvas and images analyzing
+///
+function analyzeContext($el, ctx){
+  let el = $el[0];
+  
+  const pixelsPerIncrement = 100;
+  let increment = Math.round(((el.width + el.height)/2)/pixelsPerIncrement) || 1;    
+
+  const round = 4;
+  let avgs = {};
+  //let diffs = {};
+
+  const maxShades = 3;
+
+  for(let x=0; x<el.width; x+=increment){
+    for(let y=0; y<el.height; y+=increment){
+      let p = ctx.getImageData(x, y, 1, 1).data; 
+
+      if(p[3]>250){
+        let avg = (p[0]+p[1]+p[2])/3;
+        let diff = (Math.abs(avg-p[0])+Math.abs(avg-p[1])+Math.abs(avg-p[2]))/3;
+
+        let iavg = Math.round(avg/round);
+        let idiff = Math.round(diff);
+
+        let arr = avgs[iavg] = avgs[iavg] || {};
+        arr[idiff] = (arr[idiff] || 0)+1;
+
+        //diffs[idiff] = (diffs[idiff] || 0)+1;
+      }
+    }
+  }
+
+  let indexes = Object.keys(avgs);
+  let indexesLen = indexes.length;
+  //let numDiffs = Object.keys(diffs).length;
+
+  let justInvert = true;
+
+  if(indexesLen > maxShades){ 
+    justInvert = false;
+  }
+  else {
+    const minMix = 16;
+    let totMix = 0;
+
+    for(let a in avgs){
+      let avg = avgs[a];
+      let avgDiffs = Object.keys(avg);
+
+      let avgMix = 0;
+      for(let d of avgDiffs){
+        avgMix += d;
+      }
+      avgMix /= avgDiffs.length;
+
+      totMix += avgMix;
+    } 
+    totMix /= indexesLen;
+
+    console.log('totMix', totMix, el);
+    if(totMix < minMix)
+      justInvert = false;
+  }
+
+  if(justInvert){
+    if($el.is('img'))
+      $el.addClass('imposeZeroFilter');    
+  }
+  else{
+    if($el.is('canvas'))
+      $el.addClass(invertExceptionClass);
+  }
+
+  $el.attr('aiAnalyzed', true);    
+
+  // console.log('avgs', avgs, el);
+}
+
+function analyzeImg(img){
+  let el = $(img);
+  
+  if(el.attr('aiAnalyzed'))
+    return;
+
+  let ctx = undefined;
+  if(el.is('img')){
+    let canvas = document.createElement('canvas');
+    ctx = canvas.getContext('2d');
+
+    let base_image = new Image();
+    base_image.src = img.src;
+    base_image.crossOrigin = "Anonymous";
+    base_image.onload = function(){
+      ctx.drawImage(base_image, 0, 0);
+      analyzeContext(el, ctx);        
+    }
+  }
+  else {
+    let canvas = img;
+    canvas.crossOrigin = "Anonymous";
+    ctx = canvas.getContext('2d');
+    analyzeContext(el, ctx);
+  }
+}
+
+///
+///
 let classes = {};
 
 function exceptionsFinder(){
@@ -160,6 +269,14 @@ function exceptionsFinder(){
       }
     });
   }
+
+  ///
+  /// Check for canvas (and images)
+  ///
+  let els = $("canvas, img");
+  els.each(function(){
+    analyzeImg(this);
+  });
 
   ///
   /// Space-temporal exception paradox finder
@@ -255,35 +372,42 @@ function getInvertStyle(invert){
   filters.push("contrast(0.85)");
   let strExclBackFilter = invert ? filters.join(" ") : '';
 
-  // the background-color it's experimental method for handling certain websites that uses default background color
-  // iframe are simply ignored, for the moment...
-
-  // Should set background to HTML?
-  // background-color: white;
-
-  //let imgExcludeContrastFilter = invert ? 'contrast(1.1); ' : ''; // this compensate some     website visualization problem (removed 'contrast(0.80) brightness(1.10)')
-  let bodyTextShadow = invert ? 'body{text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);} a{ /*color: #031d38;*/ -webkit-text-stroke: 0.25px black; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
+  let invertCss = invert ? 'html {background-color:white} body{text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);} a{ /*color: #031d38;*/ -webkit-text-stroke: 0.25px black; }' : ''; // removed: text-shadow: 0px 0px 1px rgba(127, 127, 127, 1);
 
   let style = `
-  html { 
-    -webkit-filter: `+strFilters +`; 
-    transition: -webkit-filter 0.3s;
-  } 
+    html { 
+      -webkit-filter: `+strFilters +`; 
+      transition: -webkit-filter 0.3s;
+    }
+  `; 
+    
+  if(invert) style += `
+    html {
+      background-color:white
+    } 
+    
+    body {
+      text-shadow: 0px 0px 2px rgba(127, 127, 127, 0.9);
+    } 
+    
+    a { 
+      /*color: #031d38;*/ 
+      -webkit-text-stroke: 0.25px black; 
+    }
 
-  `+ bodyTextShadow +`
+    /* Excluded elements */
+    ` // excluded elements (inverted twice => not inverted)
+    +exclude.join(', ')+` {
+      /*backdrop-filter: `+ strExclBackFilter +`;*/
+      -webkit-filter: `+ strExclFilters  +`; 
 
-  /* Excluded elements */
-  ` // excluded elements (inverted twice => not inverted)
-  +exclude.join(', ')+` {
-    /*backdrop-filter: `+ strExclBackFilter +`;*/
-    -webkit-filter: `+ strExclFilters  +`; 
-    transition-duration: 0.3s;
-  }`;
-  
+      transition-duration: 0.3s;
+    }
 
-  if(invert) style += `\r\nimg{
-    border-radius: 5px;
-  } `; //experimental: excludeContrastFilter for handling particular cases in images, a contrast/brightness equalization is applied...
+    img{
+      border-radius: 5px;
+    } 
+  `; 
   
   // return final style
   return style;
@@ -339,6 +463,9 @@ function aiLoaded(){
 
   targetNode.setAttribute("aiLoaded", true);
   if(body) body.setAttribute("aiLoaded", true);
+
+  if($("style").length <= 1)
+    $("html").css('background-color', 'white');
 }
 
 let firstCall = false;
