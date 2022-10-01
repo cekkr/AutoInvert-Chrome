@@ -434,14 +434,14 @@ function getInvertStyle(invert){
       box-shadow: 0px 0px 10px rgba(127, 127, 127, 0.1);
 
       -webkit-text-stroke: 0.25pt rgba(0,0,0,0.25);
-      text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(127, 127, 127, 0.75);
+      text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(127, 127, 127, 0.5);
       
       border-radius: 5px;
     }
 
     a:hover, button:hover { 
       transition-duration: 0.3s;
-      text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(0, 0, 0, 0.75),  0px 0px 3px rgba(127, 127, 127, 0.75);
+      text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(0, 0, 0, 0.75),  0px 0px 3px rgba(127, 127, 127, 0.5);
     }    
 
     /* Excluded elements */
