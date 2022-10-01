@@ -394,13 +394,13 @@ function getInvertStyle(invert){
   exclFilters.push("contrast("+(invert?1.15:1)+")");
   exclFilters.push("brightness("+(invert?1.1:1)+")");
   //exclFilters.push("drop-shadow(0px,0px, 4px, rgba(0,0,0, 1))");
-  exclFilters.push("drop-shadow(0px 0px 4px #000000)");
+  exclFilters.push("drop-shadow(0px 0px 3px rgba(0,0,0,0.9))");
   let strExclFilters = exclFilters.join(" ");
 
   filters.splice(3);
   //filters.push("blur(2px)");
   filters.push("contrast(1.05)");
-  filters.push("drop-shadow(0px 0px 3px rgba(127,127,127,0.5))");
+  filters.push("drop-shadow(0px 0px 3px rgba(0,0,0,0.9))");
   let strExclBackFilter = invert ? filters.join(" ") : '';
 
   let curExclude = [...exclude];
@@ -422,7 +422,8 @@ function getInvertStyle(invert){
     
   if(invert) style += `
     html {
-      background-color:white
+      background-color:white;
+      color: black;
     } 
     
     body {
@@ -450,6 +451,8 @@ function getInvertStyle(invert){
       /*backdrop-filter: `+ strExclBackFilter +`;*/    
 
       -webkit-filter: `+ strExclFilters  +`; 
+      -webkit-text-stroke: 0.25pt rgba(127,127,127,0.25) !important;
+
       transition-duration: 0.3s;
     }
 
