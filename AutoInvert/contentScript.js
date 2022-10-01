@@ -384,8 +384,8 @@ function getInvertStyle(invert){
   filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, "+(invert?0.90:0)+"))")
   filters.push("invert("+(invert?1:0)+")");
   filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
-  filters.push("contrast("+(invert?1.05:1)+")");
-  filters.push("brightness("+(invert?0.95:1)+")");
+  filters.push("contrast("+(invert?0.95:1)+")");
+  //filters.push("brightness("+(invert?1.05:1)+")");
   let strFilters = filters.join(" ");
 
   let exclFilters = [];
