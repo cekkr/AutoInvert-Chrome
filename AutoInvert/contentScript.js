@@ -363,8 +363,19 @@ const observer = new MutationObserver(callback);
 ///
 /// getInvertStyle
 ///
+let likeAVirgin = true;
+
 function getInvertStyle(invert){
   invert = invert || autoInvertToogle; // temporary for better days...
+
+  if(likeAVirgin){    
+    let permStyle = document.createElement("style");
+    permStyle.id = "autinvertPermanentCss";
+    permStyle.innerHTML = "a > img { padding:1pt; }";
+    document.getElementsByTagName("head")[0].appendChild(permStyle);
+
+    likeAVirgin = false; // clichè
+  }  
 
   //if(!invert) return ''; //try this way
 
@@ -415,16 +426,14 @@ function getInvertStyle(invert){
     } 
     
     body {
-      -webkit-text-stroke: 0.5pt rgba(0,0,0,0.25);
+      -webkit-text-stroke: 0.25pt rgba(0,0,0,0.25);
       text-shadow: 0px 0px 1px rgba(0, 0, 0, 1), 0px 0px 2px rgba(127, 127, 127, 0.75);
     } 
     
     a, button { 
-      /*color: #031d38;*/ 
-       
       box-shadow: 0px 0px 10px rgba(127, 127, 127, 0.1);
 
-      -webkit-text-stroke: 0.5pt rgba(0,0,0,0.25);
+      -webkit-text-stroke: 0.25pt rgba(0,0,0,0.25);
       text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(127, 127, 127, 0.75);
       
       border-radius: 5px;
@@ -433,11 +442,7 @@ function getInvertStyle(invert){
     a:hover, button:hover { 
       transition-duration: 0.3s;
       text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(0, 0, 0, 0.75),  0px 0px 3px rgba(127, 127, 127, 0.75);
-    }
-
-    a > img {
-      padding:2pt;
-    }
+    }    
 
     /* Excluded elements */
     ` // excluded elements (inverted twice => not inverted)
