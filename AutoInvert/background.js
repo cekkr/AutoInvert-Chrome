@@ -98,11 +98,11 @@ function execInvert(tab, toggle){
 
 	let domainRef = tab.domainRef;
 
-	let val = false;
+	let val = tab.toggle || false;
 
 	if(domainRef){
 
-		if(!tab.maxValPath || toggle){
+		if(!tab.maxValPath){
 			// Get more probabilistic path
 			for(let path of tab.urlPieces){
 				let clicks = Math.abs(pathToggles[path] || 0);
@@ -113,14 +113,14 @@ function execInvert(tab, toggle){
 			}
 
 			if(tab.maxValPath){
-				let clicks = pathToggles[tab.maxValPath] || 0;
-				console.log(tab.maxValPath, clicks);			
-				val = clicks > 0 ? true : false;
+				let clicks = pathToggles[tab.maxValPath] || 0;		
+				tab.toggle = val = clicks > 0 ? true : false;				
+				console.log("winner", tab.maxValPath, clicks);
 			}
 		}
 
 		if(toggle){
-			val = !val;
+			tab.toggle = val = !val;
 
 			checkMaxClicks(tab, undefined, maxPathVal/2);
 
@@ -134,9 +134,7 @@ function execInvert(tab, toggle){
 
 			waitForUpdate.tick();
 		}
-
-		// Add to list
-		if(tab.maxValPath){
+		else if(tab.maxValPath){ // Increment value to list
 			let afterSelector = false;
 			let newPath = false;
 
