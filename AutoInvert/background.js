@@ -65,6 +65,31 @@ function urlPieces(url){
 
 const maxPathVal = 8;
 
+function checkMaxClicks(tab, clicks = undefined, forceMPV = undefined){
+	if(clicks !== undefined){
+		clicks = Math.abs(clicks);
+		if(clicks > tab.maxVal){ 
+			tab.maxVal = clicks;
+
+			if(forceMPV)
+				tab.maxValPath = forceMPV;
+		}
+
+		return;
+	}
+
+	// Control max clicks
+	if(tab.maxVal > (forceMPV || maxPathVal)){
+		for(let path of tab.urlPieces){
+			let clicks = pathToggles[path] || 0;
+			clicks /= 2;
+			pathToggles[path] = clicks;
+		}
+
+		tab.maxVal /= 2;
+	}
+}
+
 function execInvert(tab, toggle){
 	console.log("execToggle", tab, toggle);
 
@@ -75,80 +100,88 @@ function execInvert(tab, toggle){
 
 	let val = false;
 
-	let maxVal=0, maxValPath=null;
-
 	if(domainRef){
 
-		// Get more probabilistic path
-		for(let path of tab.urlPieces){
-			let clicks = Math.abs(pathToggles[path] || 0);
-			if(clicks >= maxVal){
-				maxVal = clicks;
-				maxValPath = path;
-			}
-		}
-
-		if(maxValPath){
-			let clicks = pathToggles[maxValPath] || 0;
-			val = clicks < 0 ? true : false;
-		}
-
-		// Control max clicks
-		if(maxVal > maxPathVal){
+		if(!tab.maxValPath || toggle){
+			// Get more probabilistic path
 			for(let path of tab.urlPieces){
-				let clicks = pathToggles[path] || 0;
-				clicks /= 2;
-				pathToggles[path] = clicks;
+				let clicks = Math.abs(pathToggles[path] || 0);
+				if(clicks >= tab.maxVal){
+					tab.maxVal = clicks;
+					tab.maxValPath = path;
+				}
+			}
+
+			if(tab.maxValPath){
+				let clicks = pathToggles[tab.maxValPath] || 0;
+				console.log(tab.maxValPath, clicks);			
+				val = clicks > 0 ? true : false;
 			}
 		}
 
 		if(toggle){
 			val = !val;
 
+			checkMaxClicks(tab, undefined, maxPathVal/2);
+
 			for(let path of tab.urlPieces){
 				let clicks = pathToggles[path] || 0;
-				clicks += val ? -1 : 1;
+				clicks += val ? 1 : -1;
 				pathToggles[path] = clicks;
+
+				checkMaxClicks(tab, clicks, path);
 			}
 
 			waitForUpdate.tick();
 		}
 
 		// Add to list
-		if(maxValPath != null){
+		if(tab.maxValPath){
 			let afterSelector = false;
 			let newPath = false;
+
+			checkMaxClicks(tab);
+
 			for(let path of tab.urlPieces){
 				let thisNewPath = pathToggles[path] == undefined;
 				newPath = newPath || thisNewPath;
 
 				let clicks = pathToggles[path] || 0;
-				clicks += val ? -1 : 1;
+				clicks += val ? 1 : -1;
 				pathToggles[path] = clicks;
 
-				if(path == maxValPath)
+				checkMaxClicks(tab, clicks);
+
+				if(path == tab.maxValPath)
 					afterSelector = true;
 					
-				if(afterSelector && newPath && !thisNewPath)
-					break;
-
+				if(afterSelector){
+					if(newPath && thisNewPath)
+						break;
+					else
+						thisNewPath = true;
+				}
 			}
-		}
 
-		// just do it
-		if(val !== undefined){
-			chrome.tabs.sendMessage(tab.id, {
-				message: 'invert!',
-				toggle: val,
-			});
-
-			if (val) {
-				chrome.action.setIcon({path: "images/on.png", tabId:tab.id});
-			} else {
-				chrome.action.setIcon({path: "images/off.png", tabId:tab.id});
-			}
+			waitForUpdate.tick();
 		}
 	}
+
+	// just do it
+	console.log("val is", val);
+	if(true){
+		chrome.tabs.sendMessage(tab.id, {
+			message: 'invert!',
+			toggle: val,
+		});
+
+		if (val) {
+			chrome.action.setIcon({path: "images/on.png", tabId:tab.id});
+		} else {
+			chrome.action.setIcon({path: "images/off.png", tabId:tab.id});
+		}
+	}
+	
 }
 
 function extractPersonalTabObj(tab){
@@ -158,6 +191,9 @@ function extractPersonalTabObj(tab){
 		myTab.url = tab.url;		
 		myTab.domainRef = getDomain(tab.url);
 		myTab.urlPieces = urlPieces(tab.url);
+
+		myTab.maxVal = 0;
+		myTab.maxValPath = null;
 	}
 
 	myTab.status = tab.status
