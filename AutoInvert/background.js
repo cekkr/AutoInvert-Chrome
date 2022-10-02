@@ -25,18 +25,19 @@ class WaitMoment{
 ///
 
 // Absolute Variables
-let domainsToggles = {};
+let pathToggles = {};
 let tabs = {};
 
 // Get variables from storage
 chrome.storage.local.get(['autoInvertData'], function(data) {
-	Object.assign(domainsToggles, (data.autoInvertData || data).domainsToggles); // forgive the || but I'm still insecure about how the object is saved
-	console.log("Local storage loaded", data, domainsToggles);
+	//Object.assign(domainsToggles, (data.autoInvertData || data).domainsToggles); // forgive the || but I'm still insecure about how the object is saved
+	Object.assign(pathToggles, (data.autoInvertData || data).pathToggles); 
+	console.log("Local storage loaded", data, pathToggles);
 });
 
 // Wait 3 seconds before updating local storage
 const waitForUpdate = new WaitMoment(3000, ()=>{
-	chrome.storage.local.set({autoInvertData: {domainsToggles}}, function() {
+	chrome.storage.local.set({autoInvertData: {pathToggles}}, function() {
 		console.log('Local storage updated');
 	});
 });
@@ -44,6 +45,22 @@ const waitForUpdate = new WaitMoment(3000, ()=>{
 function getDomain(url){
 	console.log("get domain of",url);
 	return url.split('//')[1].split('/')[0]; // pls don't kill me
+}
+
+function urlPieces(url){
+	url = url.substr(url.split('://')[0].length+3);
+
+	let ret = [];
+	let pieces = url.split('/');
+
+	let leave = 1;
+	while(leave < pieces.length){
+		ret.push([...pieces].splice(0, pieces.length-leave).join('/'));
+		leave++;
+	}
+
+	console.log("Pieces are",ret);
+	return ret;
 }
 
 function execInvert(tab, toggle){
@@ -54,23 +71,47 @@ function execInvert(tab, toggle){
 
 	let domainRef = tab.domainRef;
 
+	let val = false;
+
 	if(domainRef){
 
+		let maxVal=0, maxValPath=null;
+		for(let path of tab.urlPieces){
+			let clicks = Math.abs(pathToggles[path] || 0);
+			if(clicks >= maxVal){
+				maxVal = clicks;
+				maxValPath = path;
+			}
+		}
+
+		if(maxValPath){
+			let clicks = pathToggles[maxValPath] || 0;
+			val = clicks < 0 ? true : false;
+		}
+
 		if(toggle){
-			domainsToggles[domainRef] = !domainsToggles[domainRef];
+			val = !val;
+
+			for(let path of tab.urlPieces){
+				let clicks = pathToggles[path] || 0;
+				clicks += val ? -1 : 1;
+				pathToggles[path] = clicks;
+
+				if(path == maxValPath)
+					break;
+			}
+
 			waitForUpdate.tick();
 		}
 
 		// just do it
-		let tabToggle = domainsToggles[domainRef];
-
-		if(tabToggle !== undefined){
+		if(val !== undefined){
 			chrome.tabs.sendMessage(tab.id, {
 				message: 'invert!',
-				toggle: tabToggle,
+				toggle: val,
 			});
 
-			if (tabToggle) {
+			if (val) {
 				chrome.action.setIcon({path: "images/on.png", tabId:tab.id});
 			} else {
 				chrome.action.setIcon({path: "images/off.png", tabId:tab.id});
@@ -85,6 +126,7 @@ function extractPersonalTabObj(tab){
 	if(myTab.url != tab.url){
 		myTab.url = tab.url;		
 		myTab.domainRef = getDomain(tab.url);
+		myTab.urlPieces = urlPieces(tab.url);
 	}
 
 	myTab.status = tab.status
