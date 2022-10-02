@@ -63,6 +63,8 @@ function urlPieces(url){
 	return ret;
 }
 
+const maxPathVal = 8;
+
 function execInvert(tab, toggle){
 	console.log("execToggle", tab, toggle);
 
@@ -73,9 +75,11 @@ function execInvert(tab, toggle){
 
 	let val = false;
 
+	let maxVal=0, maxValPath=null;
+
 	if(domainRef){
 
-		let maxVal=0, maxValPath=null;
+		// Get more probabilistic path
 		for(let path of tab.urlPieces){
 			let clicks = Math.abs(pathToggles[path] || 0);
 			if(clicks >= maxVal){
@@ -89,6 +93,15 @@ function execInvert(tab, toggle){
 			val = clicks < 0 ? true : false;
 		}
 
+		// Control max clicks
+		if(maxVal > maxPathVal){
+			for(let path of tab.urlPieces){
+				let clicks = pathToggles[path] || 0;
+				clicks /= 2;
+				pathToggles[path] = clicks;
+			}
+		}
+
 		if(toggle){
 			val = !val;
 
@@ -96,12 +109,30 @@ function execInvert(tab, toggle){
 				let clicks = pathToggles[path] || 0;
 				clicks += val ? -1 : 1;
 				pathToggles[path] = clicks;
-
-				if(path == maxValPath)
-					break;
 			}
 
 			waitForUpdate.tick();
+		}
+
+		// Add to list
+		if(maxValPath != null){
+			let afterSelector = false;
+			let newPath = false;
+			for(let path of tab.urlPieces){
+				let thisNewPath = pathToggles[path] == undefined;
+				newPath = newPath || thisNewPath;
+
+				let clicks = pathToggles[path] || 0;
+				clicks += val ? -1 : 1;
+				pathToggles[path] = clicks;
+
+				if(path == maxValPath)
+					afterSelector = true;
+					
+				if(afterSelector && newPath && !thisNewPath)
+					break;
+
+			}
 		}
 
 		// just do it
