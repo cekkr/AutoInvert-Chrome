@@ -87,7 +87,17 @@ function analyzeContext($el, ctx){
   let el = $el[0];
   
   const pixelsPerIncrement = 30;
-  let increment = Math.round(((el.width + el.height)/2)/pixelsPerIncrement) || 1;    
+  const dimensionAvg = ((el.width + el.height)/2);
+  let increment = Math.round(dimensionAvg/pixelsPerIncrement) || 1;   
+  
+  if(dimensionAvg < 200){
+    analyzedImgsUrls[el.src] = true;
+    justInvert($el, true);
+    return;
+  }
+
+  if(ctx === null)
+    return;
 
   const round = 1;
 
@@ -117,17 +127,18 @@ function analyzeContext($el, ctx){
     }
   }
   catch {
+    analyzedImgsUrls[el.src] = -2;
     return;
   }
 
   let indexes = Object.keys(avgs);
   let indexesLen = indexes.length;
 
-  let justInvert = true;
+  let invert = true;
 
   const maxShades = 3;
   if(indexesLen > maxShades){ 
-    justInvert = false;
+    invert = false;
   }
   else {
     const minMix = 0.01; //it works, even if i don't know why. Hey, but it works.
@@ -160,46 +171,65 @@ function analyzeContext($el, ctx){
     //console.log('totMix', totMixPower, variety, el);
 
     if(variety < minMix && variety != 0)
-      justInvert = false;
+    invert = false;
   }
 
-  if(justInvert){
+  analyzedImgsUrls[img.src] = invert;
+  justInvert($el, invert);
+
+  // console.log('avgs', avgs, el);
+}
+
+function justInvert($el, invert){
+  if(invert === -2)
+    return;
+
+  if(invert){
     if($el.is('img'))
       $el.addClass('imposeZeroFilter');    
   }
   else{
     if($el.is('canvas'))
       $el.addClass(invertExceptionClass);
-  }     
-
-  // console.log('avgs', avgs, el);
+  }  
 }
 
+let analyzedImgsUrls = {};
+
 function analyzeImg(img){
-  let el = $(img);
+  let $el = $(img);
   
-  if(el.attr('aiAnalyzed'))
+  if($el.attr('aiAnalyzed'))    
     return;
 
-  let ctx = undefined;
-  if(el.is('img')){
-    let canvas = document.createElement('canvas');
-    ctx = canvas.getContext('2d');
+  if(analyzedImgsUrls[img.src] === undefined){
+    let ctx = undefined;    
+    if($el.is('img')){
+      try{
+        let canvas = document.createElement('canvas');
+        ctx = canvas.getContext('2d');
 
-    let base_image = new Image();
-    base_image.src = img.src;
-    base_image.crossOrigin = "Anonymous";
-    base_image.onload = function(){
-      ctx.drawImage(base_image, 0, 0);
-      analyzeContext(el, ctx);        
+        let base_image = new Image();
+        base_image.src = img.src;
+        base_image.crossOrigin = "Anonymous";
+        base_image.onload = function(){
+          ctx.drawImage(base_image, 0, 0);
+          analyzeContext($el, ctx);        
+        }
+      }
+      catch {
+        analyzeContext($el, null); 
+      }
+    }
+    else {
+      let canvas = img;
+      canvas.crossOrigin = "Anonymous";
+      ctx = canvas.getContext('2d');
+      analyzeContext($el, ctx);
     }
   }
-  else {
-    let canvas = img;
-    canvas.crossOrigin = "Anonymous";
-    ctx = canvas.getContext('2d');
-    analyzeContext(el, ctx);
-  }
+  else 
+    justInvert($el, analyzedImgsUrls[img.src]);
 }
 
 ///
@@ -261,7 +291,10 @@ function exceptionsFinder(){
         if(hasBackgroundImage){          
           let isEmpty = true;
 
-          if(checkContent){
+          if(((node.clientWidth + node.clientHeight)/2) < 100) // leave it inverted if little enough(?)
+            isEmpty = false;
+
+          if(checkContent && isEmpty){
             let text = node.innerText;
 
             for(let c in text){
@@ -272,7 +305,7 @@ function exceptionsFinder(){
                 break;
               }
             }
-          }
+          }          
 
           if(isEmpty){
             // AutoInvert exception applied to element
@@ -381,7 +414,7 @@ function getInvertStyle(invert){
 
   // Calculate filters
   let filters = [];
-  filters.push("drop-shadow(0px 0px 3px rgba(127, 127, 127, "+(invert?0.90:0)+"))")
+  filters.push("drop-shadow(0px 0px 1pt rgba(127, 127, 127, "+(invert?0.90:0)+"))")
   filters.push("invert("+(invert?1:0)+")");
   filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
   filters.push("contrast("+(invert?0.95:1)+")");
@@ -394,13 +427,13 @@ function getInvertStyle(invert){
   exclFilters.push("contrast("+(invert?1.15:1)+")");
   exclFilters.push("brightness("+(invert?1.1:1)+")");
   //exclFilters.push("drop-shadow(0px,0px, 4px, rgba(0,0,0, 1))");
-  exclFilters.push("drop-shadow(0px 0px 3px rgba(0,0,0,0.9))");
+  exclFilters.push("drop-shadow(0px 0px 1pt rgba(127,127,127,0.9))");
   let strExclFilters = exclFilters.join(" ");
 
   filters.splice(3);
   //filters.push("blur(2px)");
   filters.push("contrast(1.05)");
-  filters.push("drop-shadow(0px 0px 3px rgba(0,0,0,0.9))");
+  filters.push("drop-shadow(0px 0px 1pt rgba(127,127,127,0.9))");
   let strExclBackFilter = invert ? filters.join(" ") : '';
 
   let curExclude = [...exclude];
@@ -432,7 +465,7 @@ function getInvertStyle(invert){
     } 
     
     a, button { 
-      box-shadow: 0px 0px 10px rgba(127, 127, 127, 0.1);
+      box-shadow: 0px 0px 10px rgba(127, 127, 127, 0.01);
 
       -webkit-text-stroke: 0.25pt rgba(0,0,0,0.25);
       text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(127, 127, 127, 0.5);
