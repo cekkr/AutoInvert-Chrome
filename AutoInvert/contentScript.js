@@ -232,6 +232,10 @@ function analyzeImg(img){
     justInvert($el, analyzedImgsUrls[img.src]);
 }
 
+function dontInvert(node){
+  return ((node.clientWidth + node.clientHeight)/2) < 100;
+}
+
 ///
 ///
 let classes = {};
@@ -291,7 +295,7 @@ function exceptionsFinder(){
         if(hasBackgroundImage){          
           let isEmpty = true;
 
-          if(((node.clientWidth + node.clientHeight)/2) < 100) // leave it inverted if little enough(?)
+          if(dontInvert(node))
             isEmpty = false;
 
           if(checkContent && isEmpty){
@@ -325,7 +329,8 @@ function exceptionsFinder(){
   ///
   let els = $("canvas, img");
   els.each(function(){
-    analyzeImg(this);
+    if(!dontInvert(this))
+      analyzeImg(this);
   });
 
   ///
