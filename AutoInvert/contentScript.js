@@ -174,7 +174,7 @@ function analyzeContext($el, ctx){
     invert = false;
   }
 
-  analyzedImgsUrls[img.src] = invert;
+  analyzedImgsUrls[el.src] = invert;
   justInvert($el, invert);
 
   // console.log('avgs', avgs, el);
