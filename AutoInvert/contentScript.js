@@ -91,7 +91,7 @@ function analyzeContext($el, ctx){
   const dimensionAvg = ((el.width + el.height)/2);
   let increment = Math.round(dimensionAvg/pixelsPerIncrement) || 1;   
   
-  if(dontInvert(el, 150)){
+  if(dontInvert(el, 200)){
     let v = analyzedImgsUrls[el.src] = false;
     justInvert($el, v);
     return;
@@ -218,6 +218,15 @@ function analyzeImg(img){
   }
 
   if(analyzedImgsUrls[img.src] === undefined){
+
+    // Wait for it
+    analyzedImgsUrls[img.src] = -2;
+    setTimeout(()=>{
+      if(analyzedImgsUrls[img.src] === -2)
+        analyzedImgsUrls[img.src] = undefined;
+    }, 2000);
+
+    // Create context to analyze
     let ctx = undefined;    
     if($el.is('img')){
       try{
@@ -399,7 +408,7 @@ function exceptionsFinder(){
 ///
 /// https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/disconnect
 
-let waitForExceptionsFinder = new WaitMoment(30, ()=>{
+let waitForExceptionsFinder = new WaitMoment(100, ()=>{
   exceptionsFinder();
 
   // GitHub exception
@@ -451,13 +460,14 @@ function getInvertStyle(invert){
   let strFilters = filters.join(" ");
 
   let exclFilters = [];
-  exclFilters.push("invert("+(invert?1:0)+")");
-  exclFilters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
-  exclFilters.push("contrast("+(invert?1.15:1)+")");
-  exclFilters.push("brightness("+(invert?1.1:1)+")");
+  exclFilters.push("invert(1)");
+  exclFilters.push("hue-rotate(180deg)"); // compensate color change // todo: reflect about this
+  exclFilters.push("contrast(1.15)");
+  exclFilters.push("brightness(1.1)");
   //exclFilters.push("drop-shadow(0px,0px, 4px, rgba(0,0,0, 1))");
-  exclFilters.push("drop-shadow(0px 0px 2pt rgba(127,127,127,0.9))");
-  exclFilters.push("drop-shadow(0px 0px 1pt rgba(0,0,0,0.9))");
+  exclFilters.push("drop-shadow(0px 0px 1pt rgba(0,0,0,1))");
+  exclFilters.push("drop-shadow(0px 0px 2px rgba(127,127,127,0.5))");
+  
   let strExclFilters = exclFilters.join(" ");
 
   filters.splice(3);
@@ -579,7 +589,10 @@ function invertCmd(toggle){
   return action;
 }
 
+let isLoaded = false;
 function aiLoaded(){
+  if(isLoaded) return;
+
   let body = document.querySelector('body');
 
   targetNode.setAttribute("aiLoaded", true);
@@ -587,6 +600,8 @@ function aiLoaded(){
 
   if($("style").length <= 1)
     $("html").css('background-color', 'white');
+
+  isLoaded = true;
 }
 
 let firstCall = false;
