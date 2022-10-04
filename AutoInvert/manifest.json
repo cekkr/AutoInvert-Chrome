@@ -6,13 +6,13 @@
       {
          "matches": ["*://*/*"],
          "run_at": "document_start",
-         "all_frames": false,
+         "all_frames": true,
          "css": ["inject.css"]
       },
       {
          "matches": ["*://*/*"],
          "run_at": "document_start",
-         "all_frames": false,
+         "all_frames": true,
          "js": ["thirds/jquery-3.6.1.min.js", "contentScript.js"]
       }
    ],
