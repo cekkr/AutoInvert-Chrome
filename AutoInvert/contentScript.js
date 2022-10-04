@@ -101,6 +101,8 @@ function analyzeContext($el, ctx){
     return;
 
   const round = 1;
+  const roundAvg = round; // think about mul by 4
+  const roundDiff = round;
 
   let avgs = {};
   let totPixels = 0;
@@ -114,8 +116,8 @@ function analyzeContext($el, ctx){
           let avg = (p[0]+p[1]+p[2])/3;
           let diff = (Math.abs(avg-p[0])+Math.abs(avg-p[1])+Math.abs(avg-p[2]))/3;
 
-          let iavg = Math.round(avg/round);
-          let idiff = Math.round(diff/round);
+          let iavg = Math.round(avg/roundAvg);
+          let idiff = Math.round(diff/roundDiff);
 
           let arr = avgs[iavg] = avgs[iavg] || {};
           arr['totPixels'] = (arr['totPixels'] || 0) + 1;
