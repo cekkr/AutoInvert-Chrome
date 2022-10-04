@@ -48,6 +48,8 @@ const alreadyCheckedElement = "autoInvertChecked";
 const applyInvertExceptionOnElements = ['div', 'figure', 'a', 'picture'];
 const dontCheckContentOn = ['a', 'figure', 'picture'];
 
+const debugImgAnalyzer = false;
+
 const exclude = []; 
 
 // background-image exceptions
@@ -90,12 +92,6 @@ function analyzeContext($el, ctx){
   const pixelsPerIncrement = 30;
   const dimensionAvg = ((el.width + el.height)/2);
   let increment = Math.round(dimensionAvg/pixelsPerIncrement) || 1;   
-  
-  if(dontInvert(el, 200)){
-    let v = analyzedImgsUrls[el.src] = false;
-    justInvert($el, v);
-    return;
-  }
 
   if(ctx === null)
     return;
@@ -139,7 +135,7 @@ function analyzeContext($el, ctx){
 
   let invert = true;
 
-  const maxShades = 3;
+  const maxShades = 10;
   if(indexesLen > maxShades){ 
     invert = false;
   }
@@ -172,10 +168,18 @@ function analyzeContext($el, ctx){
     let variety = totMix * totMixPower;    
 
     //console.log('totMix', totMixPower, variety, el);
+    if(debugImgAnalyzer) $el.attr('aiVariety', variety); 
 
     if(variety < minMix && variety != 0)
+
     invert = false;
   }
+
+  if(debugImgAnalyzer) $el.attr('aiShades', indexesLen); 
+  
+  /*if(invert && dontInvert(el, 150)){
+    invert = false;
+  }*/
 
   analyzedImgsUrls[el.src] = invert;
   justInvert($el, invert);
@@ -224,9 +228,11 @@ function analyzeImg(img){
     // Wait for it
     analyzedImgsUrls[img.src] = -2;
     setTimeout(()=>{
-      if(analyzedImgsUrls[img.src] === -2)
+      if(analyzedImgsUrls[img.src] === -2){
         analyzedImgsUrls[img.src] = undefined;
-    }, 2000);
+        $el.attr('aiAnalyzed', false);
+      }
+    }, 4000);
 
     // Create context to analyze
     let ctx = undefined;    
@@ -253,6 +259,7 @@ function analyzeImg(img){
       ctx = canvas.getContext('2d');
       analyzeContext($el, ctx);
     }
+
   }
   else 
     justInvert($el, analyzedImgsUrls[img.src]);
@@ -364,8 +371,7 @@ function exceptionsFinder(){
   ///
   let els = $("canvas, :not(picture) > img");
   els.each(function(){
-    if(!dontInvert(this))
-      analyzeImg(this);
+    analyzeImg(this);
   });
 
   ///
