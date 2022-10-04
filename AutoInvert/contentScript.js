@@ -42,10 +42,11 @@ class WaitMoment{
 ///
 /// Excluded element from brightness inverting list
 ///
+const classZeroFilter = "imposeZeroFilter";
 const invertExceptionClass = "autoInvertException";
 const alreadyCheckedElement = "autoInvertChecked";
-const applyBackgroundExceptionOnElements = ['div', 'figure', 'a'];
-const dontCheckContentOn = ['a', 'figure'];
+const applyInvertExceptionOnElements = ['div', 'figure', 'a', 'picture'];
+const dontCheckContentOn = ['a', 'figure', 'picture'];
 
 const exclude = []; 
 
@@ -90,9 +91,9 @@ function analyzeContext($el, ctx){
   const dimensionAvg = ((el.width + el.height)/2);
   let increment = Math.round(dimensionAvg/pixelsPerIncrement) || 1;   
   
-  if(dimensionAvg < 200){
-    analyzedImgsUrls[el.src] = true;
-    justInvert($el, true);
+  if(dontInvert(el, 150)){
+    let v = analyzedImgsUrls[el.src] = false;
+    justInvert($el, v);
     return;
   }
 
@@ -185,8 +186,9 @@ function justInvert($el, invert){
     return;
 
   if(invert){
-    if($el.is('img'))
+    if($el.is('img')){
       $el.addClass('imposeZeroFilter');    
+    }
   }
   else{
     if($el.is('canvas'))
@@ -194,13 +196,26 @@ function justInvert($el, invert){
   }  
 }
 
+const analyzedImgsChecker = false;
+let imgsUrls = {};
 let analyzedImgsUrls = {};
+let analyzedImgs = [];
 
 function analyzeImg(img){
   let $el = $(img);
-  
+
   if($el.attr('aiAnalyzed'))    
     return;
+
+  if(analyzedImgsChecker){
+    let imgUrl = imgsUrls[img.src] = imgsUrls[img.src] || {
+      src: img.src,
+      imgs: []
+    }
+
+    imgUrl.imgs.push(img);
+    analyzedImgs.push(img);
+  }
 
   if(analyzedImgsUrls[img.src] === undefined){
     let ctx = undefined;    
@@ -230,10 +245,11 @@ function analyzeImg(img){
   }
   else 
     justInvert($el, analyzedImgsUrls[img.src]);
+
 }
 
-function dontInvert(node){
-  return ((node.clientWidth + node.clientHeight)/2) < 100;
+function dontInvert(node, limit = 100){
+  return ((node.clientWidth + node.clientHeight)/2) < limit;
 }
 
 ///
@@ -241,7 +257,7 @@ function dontInvert(node){
 let classes = {};
 
 function exceptionsFinder(){
-  for(let el of applyBackgroundExceptionOnElements){
+  for(let el of applyInvertExceptionOnElements){
     let checkContent = !dontCheckContentOn.includes(el);
 
     //tothink: a more efficient way for collecting elements to invert
@@ -301,12 +317,15 @@ function exceptionsFinder(){
           if(checkContent && isEmpty){
             let text = node.innerText;
 
+            let count = 0;
             for(let c in text){
               const ch = text[c];
 
-              if(emptyChars.indexOf(ch)<0){  // Check if there are just useless char
-                isEmpty = false;
-                break;
+              if(emptyChars.indexOf(ch)<0){  // Check if it's not "empty" char
+                if(count++ > 128){
+                  empty = false;
+                  break;                  
+                }
               }
             }
           }          
@@ -314,6 +333,11 @@ function exceptionsFinder(){
           if(isEmpty){
             // AutoInvert exception applied to element
             node.classList.add(invertExceptionClass); 
+
+            /*$(node).find("img").each(function(){
+              this.classList.add(classZeroFilter);
+            });*/
+            
             clearParentsExceptions(node); // remove exceptions to parent element
           }
 
@@ -327,7 +351,7 @@ function exceptionsFinder(){
   ///
   /// Check for canvas (and images)
   ///
-  let els = $("canvas, img");
+  let els = $("canvas, :not(picture) > img");
   els.each(function(){
     if(!dontInvert(this))
       analyzeImg(this);
@@ -387,7 +411,7 @@ let waitForExceptionsFinder = new WaitMoment(30, ()=>{
 let targetNode = document.querySelector('html');
 
 // Options for the observer (which mutations to observe)
-const config = { attributes: false, childList: true, subtree: true };
+const config = { attributes: true, childList: true, subtree: true };
 
 // Callback function to execute when mutations are observed
 const callback = (mutationList, observer) => {
@@ -432,7 +456,8 @@ function getInvertStyle(invert){
   exclFilters.push("contrast("+(invert?1.15:1)+")");
   exclFilters.push("brightness("+(invert?1.1:1)+")");
   //exclFilters.push("drop-shadow(0px,0px, 4px, rgba(0,0,0, 1))");
-  exclFilters.push("drop-shadow(0px 0px 1pt rgba(127,127,127,0.9))");
+  exclFilters.push("drop-shadow(0px 0px 2pt rgba(127,127,127,0.9))");
+  exclFilters.push("drop-shadow(0px 0px 1pt rgba(0,0,0,0.9))");
   let strExclFilters = exclFilters.join(" ");
 
   filters.splice(3);
@@ -443,12 +468,12 @@ function getInvertStyle(invert){
 
   let curExclude = [...exclude];
   for(var e in curExclude){
-    curExclude[e] += ':not(.imposeZeroFilter)';
+    curExclude[e] += ':not(.'+classZeroFilter+')';
   }
   
   let curExcludeHover = [...exclude];
   for(var e in curExcludeHover){
-    curExcludeHover[e] += '.imposeZeroFilter:hover';
+    curExcludeHover[e] += '.'+classZeroFilter+':hover';
   }
   
   let style = `
