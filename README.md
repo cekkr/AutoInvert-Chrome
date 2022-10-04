@@ -3,11 +3,11 @@
 
 AutoInvert inverts pages brightness (but not their images or videos) on Google Chrome to **reduce strain on eyes and improve readability at night, keeping the setting in every tab of the domains where it's active**! 
 
-![AutoInvert](https://i.ibb.co/ZK1SLJK/big-logo-cover-freestyle.png)
+[![AutoInvert](https://i.ibb.co/ZK1SLJK/big-logo-cover-freestyle.png)](https://chrome.google.com/webstore/detail/auto-invert/pfkofdhiaclpognkfgkoeipepalkgfal)
 
 #### Activate and deactive it with an unique button how many times you prefer, it works in real time without reloads nor waiting times!
 
-<sub><i>Current version: 1.0.94 (27 Sep 22)</i><sub>
+<sub><i>Current version: 1.1.12 (4 Oct 22)</i><sub>
 
 <hr>
 
