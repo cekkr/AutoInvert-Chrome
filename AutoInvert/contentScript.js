@@ -496,7 +496,7 @@ function getInvertStyle(invert){
   
   let style = `
     html { 
-      -webkit-filter: `+strFilters +`; 
+      -webkit-filter: `+strFilters +`;
       transition: -webkit-filter 0.3s;
     }
   `; 
@@ -529,7 +529,7 @@ function getInvertStyle(invert){
     /* Excluded elements */
     ` // excluded elements (inverted twice => not inverted)
     +curExclude.join(', ')+` {
-      /*backdrop-filter: `+ strExclBackFilter +`;*/    
+      /*backdrop-filter: `+ strExclBackFilter +`;*/
 
       -webkit-filter: `+ strExclFilters  +`; 
       -webkit-text-stroke: 0.25pt rgba(127,127,127,0.25) !important;
@@ -606,7 +606,7 @@ function aiLoaded(){
   targetNode.setAttribute("aiLoaded", true);
   if(body) body.setAttribute("aiLoaded", true);
 
-  if($("style").length <= 1)
+  if($("style").length <= 1 && $("html").css('background-color') == undefined)
     $("html").css('background-color', 'white');
 
   isLoaded = true;
