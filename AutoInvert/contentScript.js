@@ -35,6 +35,34 @@ class WaitMoment{
   }
 }
 
+function getDomPath(el) {
+  var stack = [];
+  while ( el.parentNode != null ) {
+    //console.log(el.nodeName);
+    var sibCount = 0;
+    var sibIndex = 0;
+    for ( var i = 0; i < el.parentNode.childNodes.length; i++ ) {
+      var sib = el.parentNode.childNodes[i];
+      if ( sib.nodeName == el.nodeName ) {
+        if ( sib === el ) {
+          sibIndex = sibCount;
+        }
+        sibCount++;
+      }
+    }
+    if ( el.hasAttribute('id') && el.id != '' ) {
+      stack.unshift(el.nodeName.toLowerCase() + '#' + el.id);
+    } else if ( sibCount > 1 ) {
+      stack.unshift(el.nodeName.toLowerCase() + ':eq(' + sibIndex + ')');
+    } else {
+      stack.unshift(el.nodeName.toLowerCase());
+    }
+    el = el.parentNode;
+  }
+
+  return stack.slice(1); // removes the html element
+}
+
 ///
 /// Script
 ///
@@ -61,10 +89,11 @@ exclude.push('.'+invertExceptionClass);
 exclude.push('img'); // directly handled in the CSS
 exclude.push('video');
 exclude.push('iframe');
+exclude.push('i');
 
 // think about these tags:
 //exclude.push('svg');
-//exclude.push('canvas');
+exclude.push('canvas');
 
 ///
 /// Exclusion exception finder: handle [semi]empty elements with background-image for JS exclusion
@@ -142,15 +171,12 @@ function analyzeContext($el, ctx){
     avgLight += (a/(255*roundAvg /*PAY ATTENTION*/))*(avgs[a]['totPixels']/totPixels);
   }
 
-  let invert = true;
+  let invert = !dontInvert(el);
 
   const maxShades = 10;
 
   if(avgLight < 0.25){
     invert = false;
-  }
-  else if(avgLight > 0.8){
-    invert = true;
   }
   else if(indexesLen > maxShades){
     invert = false;
@@ -233,6 +259,9 @@ function analyzeImg(img){
     img.src = $el.attr('aibackimg');
   }
 
+  if(!img.src)
+    img.src = getDomPath(img);
+
   if(analyzedImgsChecker){
     let imgUrl = imgsUrls[img.src] = imgsUrls[img.src] || {
       src: img.src,
@@ -277,7 +306,12 @@ function analyzeImg(img){
       let canvas = img;
       canvas.crossOrigin = "Anonymous";
       ctx = canvas.getContext('2d');
-      analyzeContext($el, ctx);
+      if(ctx){
+        analyzeContext($el, ctx);
+      }
+      else {
+        analyzedImgsUrls[img.src] = true;
+      }
     }
     else if(img.nodeName == 'DIV'){
       console.log("todo div", img);
@@ -378,8 +412,7 @@ function exceptionsFinder(){
 
           if(dontInvert(node))
             isEmpty = false;
-
-          if(checkContent && isEmpty){
+          else if(checkContent){
             let text = node.innerText;
 
             let count = 0;
@@ -578,7 +611,7 @@ function getInvertStyle(invert){
     +curExclude.join(', ')+` {
       /*backdrop-filter: `+ strExclBackFilter +`;*/
 
-      -webkit-filter: `+ strExclFilters  +`; 
+      -webkit-filter: `+ strExclFilters  +` !important;
       -webkit-text-stroke: 0.25pt rgba(127,127,127,0.25) !important;
 
       transition-duration: 0.3s;
