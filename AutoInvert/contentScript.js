@@ -84,14 +84,17 @@ function clearParentsExceptions(el){
 ///
 /// Canvas and images analyzing
 ///
+
+//TODO: update algorithm watching https://context.reverso.net/translation/italian-english/ flags
+
 function analyzeContext($el, ctx){
   $el.attr('aiAnalyzed', true); 
 
   let el = $el[0];
   
-  const pixelsPerIncrement = 30;
+  const pixelsPerIncrement = 50;
   const dimensionAvg = ((el.width + el.height)/2);
-  let increment = Math.round(dimensionAvg/pixelsPerIncrement) || 1;   
+  let increment = Math.round((dimensionAvg/pixelsPerIncrement)*1.5) || 1;
 
   if(ctx === null)
     return;
@@ -133,10 +136,23 @@ function analyzeContext($el, ctx){
   let indexes = Object.keys(avgs);
   let indexesLen = indexes.length;
 
+  // Calculate avg light
+  let avgLight = 0;
+  for(let a in avgs){
+    avgLight += (a/(255*roundAvg /*PAY ATTENTION*/))*(avgs[a]['totPixels']/totPixels);
+  }
+
   let invert = true;
 
   const maxShades = 10;
-  if(indexesLen > maxShades){ 
+
+  if(avgLight < 0.25){
+    invert = false;
+  }
+  else if(avgLight > 0.8){
+    invert = true;
+  }
+  else if(indexesLen > maxShades){
     invert = false;
   }
   else {
@@ -165,7 +181,7 @@ function analyzeContext($el, ctx){
     } 
 
     totMixPower /= totPixels;
-    let variety = totMix * totMixPower;    
+    let variety = totMix * totMixPower;
 
     //console.log('totMix', totMixPower, variety, el);
     if(debugImgAnalyzer) $el.attr('aiVariety', variety); 
@@ -210,8 +226,12 @@ let analyzedImgs = [];
 function analyzeImg(img){
   let $el = $(img);
 
-  if($el.attr('aiAnalyzed'))    
+  if($el.attr('aiAnalyzed'))
     return;
+
+  if(img.nodeName == 'DIV'){
+    img.src = $el.attr('aibackimg');
+  }
 
   if(analyzedImgsChecker){
     let imgUrl = imgsUrls[img.src] = imgsUrls[img.src] || {
@@ -236,7 +256,7 @@ function analyzeImg(img){
 
     // Create context to analyze
     let ctx = undefined;    
-    if($el.is('img')){
+    if(img.nodeName == 'IMG'){
       try{
         let canvas = document.createElement('canvas');
         ctx = canvas.getContext('2d');
@@ -253,11 +273,15 @@ function analyzeImg(img){
         analyzeContext($el, null); 
       }
     }
-    else {
+    else if(img.nodeName == 'CANVAS') {
       let canvas = img;
       canvas.crossOrigin = "Anonymous";
       ctx = canvas.getContext('2d');
       analyzeContext($el, ctx);
+    }
+    else if(img.nodeName == 'DIV'){
+      console.log("todo div", img);
+      analyzedImgsUrls[img.src] = true;
     }
 
   }
@@ -299,7 +323,19 @@ function exceptionsFinder(){
       if(possibleEl){
 
         let elStyle = (node.getAttribute("style")||'').replaceAll(' ','');
-        let hasBackgroundImage = elStyle.includes("background-image:url(")
+        const backgroundImgCss = "background-image:url(";
+        let hasBackgroundImage = elStyle.includes(backgroundImgCss);
+
+        if(hasBackgroundImage){
+          let url = elStyle.split(backgroundImgCss)[1].split(')')[0];
+          node.setAttribute('aibackimg', url);
+        }
+        else {
+          if(elStyle.includes('background')){
+            let url = elStyle.split('background')[1].split(':')[1].split(';')[0]; //get color
+            node.setAttribute('aibackimg', url);
+          }
+        }
 
         /*if(elStyle.includes("background-image"))
           console.log(el, "contains background", hasBackgroundImage);*/
@@ -318,15 +354,26 @@ function exceptionsFinder(){
             }  
 
             let backgroundImage = '';
-            if(style && (backgroundImage = style.getPropertyValue('background-image'))){
-              backgroundImage = backgroundImage.replaceAll(' ','');
-              hasBackgroundImage = backgroundImage.startsWith('url(');
-              break;
+            if(style){
+              if((backgroundImage = style.getPropertyValue('background-image'))){
+                backgroundImage = backgroundImage.replaceAll(' ','');
+                hasBackgroundImage = backgroundImage.startsWith('url(');
+
+                if(hasBackgroundImage){
+                  let url = backgroundImage.split('(')[1].split(')')[0];
+                  node.setAttribute('aibackimg', url);
+                }
+
+                break;
+              }
+              else if((backgroundImage = style.getPropertyValue('background') || style.getPropertyValue('background-color'))){
+                node.setAttribute('aibackimg', backgroundImage);
+              }
             }
           }
         }
 
-        if(hasBackgroundImage){          
+        if(hasBackgroundImage){
           let isEmpty = true;
 
           if(dontInvert(node))
@@ -369,7 +416,7 @@ function exceptionsFinder(){
   ///
   /// Check for canvas (and images)
   ///
-  let els = $("canvas, :not(picture) > img");
+  let els = $("canvas, :not(picture) > img, div:has([aibackimg])");
   els.each(function(){
     analyzeImg(this);
   });
