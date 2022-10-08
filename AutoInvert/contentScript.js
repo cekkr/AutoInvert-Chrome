@@ -1,3 +1,6 @@
+// dev
+const rememberWorkingOn = false;
+
 // page variables
 var autoInvertToogle = false;
 
@@ -314,7 +317,7 @@ function analyzeImg(img){
       }
     }
     else if(img.nodeName == 'DIV'){
-      console.log("todo div", img);
+      if(rememberWorkingOn) console.log("todo div", img);
       analyzedImgsUrls[img.src] = true;
     }
 
@@ -677,11 +680,11 @@ function invertCmd(toggle){
   return action;
 }
 
-let isLoaded = false;
 function aiLoaded(){
-  if(isLoaded) return;
-
   let body = document.querySelector('body');
+
+  if(body.hasAttribute('aiLoaded'))
+    return;
 
   targetNode.setAttribute("aiLoaded", true);
   if(body) body.setAttribute("aiLoaded", true);
@@ -689,7 +692,6 @@ function aiLoaded(){
   if($("style").length <= 1 && $("html").css('background-color') == undefined)
     $("html").css('background-color', 'white');
 
-  isLoaded = true;
 }
 
 let firstCall = false;
@@ -705,7 +707,7 @@ chrome.runtime.onMessage.addListener(
           return;
         }
       }
-      
+
       if(invertCmd(request.toggle)){        
         console.info("AutoInvert extension action", request);
         firstCall = true;
@@ -723,3 +725,10 @@ window.addEventListener("load", ()=>{
   tabLoaded = true;
   aiLoaded();
 });
+
+let stateCheck = setInterval(() => {
+  if (document.readyState === 'complete') {
+    clearInterval(stateCheck);
+    aiLoaded();
+  }
+}, 1000);
