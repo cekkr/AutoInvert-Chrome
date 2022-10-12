@@ -92,7 +92,7 @@ exclude.push('.'+invertExceptionClass);
 exclude.push('img'); // directly handled in the CSS
 exclude.push('video');
 exclude.push('iframe');
-exclude.push('i');
+//exclude.push('i'); //for icon, but is used for italic
 
 // think about these tags:
 //exclude.push('svg');
