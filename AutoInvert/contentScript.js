@@ -606,7 +606,7 @@ function getInvertStyle(invert){
 
     a:hover, button:hover { 
       transition-duration: 0.3s;
-      text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(0, 0, 0, 0.75),  0px 0px 3px rgba(127, 127, 127, 0.5);
+      text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(127, 127, 127, 0.75);
     }    
 
     /* Excluded elements */
