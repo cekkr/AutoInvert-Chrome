@@ -124,7 +124,7 @@ function analyzeContext($el, ctx){
 
   let el = $el[0];
   
-  const pixelsPerIncrement = 50;
+  const pixelsPerIncrement = 25;
   const dimensionAvg = ((el.width + el.height)/2);
   let increment = Math.round((dimensionAvg/pixelsPerIncrement)*1.5) || 1;
 
@@ -183,19 +183,18 @@ function analyzeContext($el, ctx){
 
   let invert = !dontInvert(el);
 
-  const maxShades = 10;
+  const maxShades = 4;
 
-  if(avgP3 < 128){
+  //console.log(el, avgP3, indexesLen, avgLight)
+
+  if(avgP3 < 127 && avgLight < 0.25){
     invert = true;
-  }
-  else if(avgLight < 0.25){
-    invert = false;
   }
   else if(indexesLen > maxShades){
     invert = false;
   }
   else {
-    const minMix = 0.01; //it works, even if i don't know why. Hey, but it works.
+    const minMix = 1; //it works, even if i don't know why. Hey, but it works.
 
     let totMix = 0;
     let totMixPower = 0;
@@ -225,9 +224,8 @@ function analyzeContext($el, ctx){
     //console.log('totMix', totMixPower, variety, el);
     if(debugImgAnalyzer) $el.attr('aiVariety', variety); 
 
-    if(variety < minMix && variety != 0)
-
-    invert = false;
+    if(variety < minMix)
+      invert = false;
   }
 
   if(debugImgAnalyzer) $el.attr('aiShades', indexesLen); 
