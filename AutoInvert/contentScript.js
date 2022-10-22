@@ -76,7 +76,7 @@ function getDomPath(el) {
 const classZeroFilter = "imposeZeroFilter";
 const invertExceptionClass = "autoInvertException";
 const alreadyCheckedElement = "autoInvertChecked";
-const applyInvertExceptionOnElements = ['div', 'figure', 'a', 'picture'];
+const applyInvertExceptionOnElements = ['div', 'figure', 'a', 'picture', 'span'];
 const dontCheckContentOn = ['a', 'figure', 'picture'];
 
 const debugImgAnalyzer = false;
@@ -136,12 +136,17 @@ function analyzeContext($el, ctx){
   const roundDiff = round;
 
   let avgs = {};
+  let totPixelsConsidered = 0;
   let totPixels = 0;
+  let avgP3 = 0;
 
-  try{
+  try{    
     for(let x=0; x<el.width; x+=increment){
       for(let y=0; y<el.height; y+=increment){
         let p = ctx.getImageData(x, y, 1, 1).data; 
+
+        avgP3 += p[3]
+        totPixels++
 
         if(p[3]>250){
           let avg = (p[0]+p[1]+p[2])/3;
@@ -153,7 +158,7 @@ function analyzeContext($el, ctx){
           let arr = avgs[iavg] = avgs[iavg] || {};
           arr['totPixels'] = (arr['totPixels'] || 0) + 1;
           arr[idiff] = (arr[idiff] || 0)+1;        
-          totPixels++;
+          totPixelsConsidered++;
 
           //diffs[idiff] = (diffs[idiff] || 0)+1;
         }
@@ -165,20 +170,25 @@ function analyzeContext($el, ctx){
     return;
   }
 
+  avgP3 /= totPixels;
+
   let indexes = Object.keys(avgs);
   let indexesLen = indexes.length;
 
   // Calculate avg light
   let avgLight = 0;
   for(let a in avgs){
-    avgLight += (a/(255*roundAvg /*PAY ATTENTION*/))*(avgs[a]['totPixels']/totPixels);
+    avgLight += (a/(255*roundAvg /*PAY ATTENTION*/))*(avgs[a]['totPixels']/totPixelsConsidered);
   }
 
   let invert = !dontInvert(el);
 
   const maxShades = 10;
 
-  if(avgLight < 0.25){
+  if(avgP3 < 128){
+    invert = true;
+  }
+  else if(avgLight < 0.25){
     invert = false;
   }
   else if(indexesLen > maxShades){
@@ -209,7 +219,7 @@ function analyzeContext($el, ctx){
       totMixPower += avgMix;
     } 
 
-    totMixPower /= totPixels;
+    totMixPower /= totPixelsConsidered;
     let variety = totMix * totMixPower;
 
     //console.log('totMix', totMixPower, variety, el);
@@ -291,7 +301,7 @@ function analyzeImg(img){
     if(img.nodeName == 'IMG'){
       try{
         let canvas = document.createElement('canvas');
-        ctx = canvas.getContext('2d');
+        ctx = canvas.getContext('2d', {willReadFrequently: true});
 
         let base_image = new Image();
         base_image.src = img.src;
@@ -308,7 +318,7 @@ function analyzeImg(img){
     else if(img.nodeName == 'CANVAS') {
       let canvas = img;
       canvas.crossOrigin = "Anonymous";
-      ctx = canvas.getContext('2d');
+      ctx = canvas.getContext('2d', {willReadFrequently: true});
       if(ctx){
         analyzeContext($el, ctx);
       }
