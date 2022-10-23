@@ -192,7 +192,7 @@ function analyzeContext($el, ctx){
 
   //console.log(el, avgP3, indexesLen, avgLight)
 
-  if(avgP3 < 127 && avgLight < 0.25){
+  if(avgP3 < 127 && avgLight < 0.1){
     invert = true;
   }
   else if(indexesLen > maxShades){
