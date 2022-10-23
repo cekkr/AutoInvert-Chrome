@@ -124,9 +124,14 @@ function analyzeContext($el, ctx){
 
   let el = $el[0];
   
-  const pixelsPerIncrement = 25;
+  if(el.src.endsWith(".svg")){
+    justInvert($el, true);
+    return;
+  }
+
+  const pixelsPerIncrement = 30;
   const dimensionAvg = ((el.width + el.height)/2);
-  let increment = Math.round((dimensionAvg/pixelsPerIncrement)*1.5) || 1;
+  let increment = Math.round((dimensionAvg/pixelsPerIncrement)*1.25) || 1;
 
   if(ctx === null)
     return;
@@ -301,8 +306,12 @@ function analyzeImg(img){
         let canvas = document.createElement('canvas');
         ctx = canvas.getContext('2d', {willReadFrequently: true});
 
+        if(img.src.endsWith(".webp"))
+          return;
+
         let base_image = new Image();
         base_image.src = img.src;
+       
         base_image.crossOrigin = "Anonymous";
         base_image.onload = function(){
           ctx.drawImage(base_image, 0, 0);
