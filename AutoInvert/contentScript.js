@@ -1,5 +1,6 @@
 // dev
 const rememberWorkingOn = false;
+const debug = false
 
 // page variables
 var autoInvertToogle = false;
@@ -183,8 +184,10 @@ function analyzeContext($el, ctx){
   // Calculate avg light
   let avgLight = 0;
   for(let a in avgs){
-    avgLight += (a/(255*roundAvg /*PAY ATTENTION*/))*(avgs[a]['totPixels']/totPixelsConsidered);
+    avgLight += (a/(255*roundAvg /*PAY ATTENTION*/))*(avgs[a]['totPixels']);
   }
+
+  avgLight /= totPixelsConsidered
 
   let invert = !dontInvert(el);
 
@@ -193,9 +196,11 @@ function analyzeContext($el, ctx){
   //console.log(el, avgP3, indexesLen, avgLight)
 
   if(avgP3 < 127 && avgLight < 0.1){
+    if(debug) $el.attr("aisettedby","avgLight="+avgLight)
     invert = true;
   }
   else if(indexesLen > maxShades){
+    if(debug) $el.attr("aisettedby","indexesLen="+indexesLen)
     invert = false;
   }
   else {
@@ -227,13 +232,11 @@ function analyzeContext($el, ctx){
     let variety = totMix * totMixPower;
 
     //console.log('totMix', totMixPower, variety, el);
-    if(debugImgAnalyzer) $el.attr('aiVariety', variety); 
+    if(debug) $el.attr("aisettedby","variety="+variety)
 
     if(variety < minMix)
       invert = false;
   }
-
-  if(debugImgAnalyzer) $el.attr('aiShades', indexesLen); 
   
   /*if(invert && dontInvert(el, 150)){
     invert = false;
