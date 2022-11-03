@@ -191,7 +191,7 @@ function analyzeContext($el, ctx){
 
   let invert = !dontInvert(el);
 
-  const maxShades = 4;
+  const maxShades = 2;
 
   //console.log(el, avgP3, indexesLen, avgLight)
 
