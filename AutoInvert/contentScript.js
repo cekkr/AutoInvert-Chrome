@@ -146,6 +146,8 @@ function analyzeContext($el, ctx){
   let totPixels = 0;
   let avgP3 = 0;
 
+  let opaquePixels = 0
+
   try{    
     for(let x=0; x<el.width; x+=increment){
       for(let y=0; y<el.height; y+=increment){
@@ -176,6 +178,8 @@ function analyzeContext($el, ctx){
     return;
   }
 
+  let opacity = totPixelsConsidered / totPixels
+
   avgP3 /= totPixels;
 
   let indexes = Object.keys(avgs);
@@ -195,13 +199,13 @@ function analyzeContext($el, ctx){
 
   //console.log(el, avgP3, indexesLen, avgLight)
 
-  if(avgP3 < 127 && avgLight < 0.1){
-    if(debug) $el.attr("aisettedby","avgLight="+avgLight)
-    invert = true;
-  }
-  else if(indexesLen > maxShades){
+  if(indexesLen > maxShades || (avgLight < 0.5 && opacity > 0.5)){
     if(debug) $el.attr("aisettedby","indexesLen="+indexesLen)
     invert = false;
+  }
+  else if(avgP3 < 127 && avgLight < 0.1){
+    if(debug) $el.attr("aisettedby","avgLight="+avgLight)
+    invert = true;
   }
   else {
     const minMix = 1; //it works, even if i don't know why. Hey, but it works.
