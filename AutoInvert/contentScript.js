@@ -616,21 +616,21 @@ function getInvertStyle(invert){
     
     body {
       -webkit-text-stroke: 0.25pt rgba(127,127,127,0.25);
-      text-shadow: 0px 0px 1px rgba(0, 0, 0, 1), 0px 0px 2px rgba(127, 127, 127, 0.75);
+      text-shadow: 0px 0px 0.5px rgba(0, 0, 0, 1), 0px 0px 1px rgba(127, 127, 127, 0.75);
     } 
     
     a, button { 
       box-shadow: 0px 0px 10px rgba(127, 127, 127, 0.01);
 
       -webkit-text-stroke: 0.25pt rgba(127,127,127.25);
-      text-shadow: 0px 0px 1px rgba(127,127,127, 0.95), 0px 0px 2px rgba(127, 127, 127, 0.5);
+      text-shadow: 0px 0px 0.5px rgba(127,127,127, 0.95), 0px 0px 1px rgba(127, 127, 127, 0.5);
       
       border-radius: 5px;
     }
 
     a:hover, button:hover { 
       transition-duration: 0.3s;
-      text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.95), 0px 0px 2px rgba(127, 127, 127, 0.75);
+      text-shadow: 0px 0px 0.5px rgba(0, 0, 0, 0.95), 0px 0px 1px rgba(127, 127, 127, 0.75);
     }    
 
     /* Excluded elements */
