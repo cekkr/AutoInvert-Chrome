@@ -641,6 +641,8 @@ function getInvertStyle(invert){
       -webkit-filter: `+ strExclFilters  +` !important;
       -webkit-text-stroke: 0.25pt rgba(127,127,127,0.25) !important;
 
+      backdrop-filter: invert(0%);
+
       transition-duration: 0.3s;
     }
 
