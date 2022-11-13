@@ -195,7 +195,7 @@ function analyzeContext($el, ctx){
 
   let invert = !dontInvert(el);
 
-  const maxShades = 2;
+  const maxShades = 4;
 
   //console.log(el, avgP3, indexesLen, avgLight)
 
@@ -208,7 +208,7 @@ function analyzeContext($el, ctx){
     invert = true;
   }
   else {
-    const minMix = 1; //it works, even if i don't know why. Hey, but it works.
+    const minMix = 0.1; //it works, even if i don't know why. Hey, but it works.
 
     let totMix = 0;
     let totMixPower = 0;
@@ -580,7 +580,8 @@ function getInvertStyle(invert){
   exclFilters.push("contrast(1.15)");
   exclFilters.push("brightness(1.1)");
   //exclFilters.push("drop-shadow(0px,0px, 4px, rgba(0,0,0, 1))");
-  exclFilters.push("drop-shadow(0px 0px 1px rgba(0,0,0,1))");
+  
+  //exclFilters.push("drop-shadow(0px 0px 1px rgba(0,0,0,1))");
   exclFilters.push("drop-shadow(0px 0px 2px rgba(127,127,127,0.5))");
   
   let strExclFilters = exclFilters.join(" ");
