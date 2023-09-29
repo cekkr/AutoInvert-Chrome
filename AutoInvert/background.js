@@ -230,3 +230,22 @@ chrome.tabs.onActivated.addListener(
 		execInvert(tabs[res.tabId]);
 	}
 );
+
+///
+/// Context menu
+///
+
+chrome.contextMenus.create(
+	{
+		contexts: ['action'],
+		title: 'Help us to improve!',
+		id: "aiGetSupport",
+	},
+	(info)=>{
+		console.log("create context menu: ", info)
+})
+
+chrome.contextMenus.onClicked.addListener(function(e) {
+	if(e.menuItemId == 'aiGetSupport')
+		chrome.tabs.create({ url: "https://forum.geckos.ink/forumdisplay.php?fid=4" });
+})
