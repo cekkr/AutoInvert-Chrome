@@ -1,0 +1,21 @@
+html:not([aiLoaded]){
+    background-color: black;
+}
+
+body:not([aiLoaded]){
+    opacity: 0.4;
+}
+
+html:is([aiLoaded]){    
+    transition: background-color 0.6s, filter 0.4s;    
+    /*color: black;*/
+}
+
+body:is([aiLoaded]){
+    transition: opacity 0.2s;
+}
+
+html, body{
+    transition-timing-function: ease;
+    transition-duration: 0.3s;    
+}

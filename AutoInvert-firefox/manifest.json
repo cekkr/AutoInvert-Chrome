@@ -1,0 +1,59 @@
+{
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*"
+      ],
+      "run_at": "document_start",
+      "all_frames": false,
+      "css": [
+        "inject.css"
+      ]
+    },
+    {
+      "matches": [
+        "*://*/*"
+      ],
+      "run_at": "document_start",
+      "all_frames": false,
+      "js": [
+        "thirds/jquery-3.6.1.min.js",
+        "contentScript.js"
+      ]
+    }
+  ],
+  "action": {
+    "default_icon": "images/off.png",
+    "default_title": "Toggle Auto Invert!"
+  },
+  "description": "Toggle invert brightness on every website and its tab when you prefer to reduce strain on eyes and improve readability at night!",
+  "icons": {
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "manifest_version": 3,
+  "name": "Auto Invert!",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "version": "1.1.9",
+  "author": "cekkr",
+  "homepage_url": "https://github.com/cekkr/autoinvert-chrome",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "autoinvert@firefox.extension",
+      "strict_min_version": "42.0"
+    }
+  }
+}
