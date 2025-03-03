@@ -179,3 +179,5 @@ if (require.main === module) {
   // Esportare la funzione per l'uso in altri script
   module.exports = { packageFirefoxExtension };
 }
+
+// node firefoxXip.js AutoInvert-firefox AutoInvert-firefox.zip

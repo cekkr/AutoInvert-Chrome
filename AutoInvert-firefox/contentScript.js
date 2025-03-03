@@ -567,7 +567,7 @@ function getInvertStyle(invert){
 
   // Calculate filters
   let filters = [];
-  filters.push("drop-shadow(0px 0px 1pt rgba(127, 127, 127, "+(invert?0.90:0)+"))")
+  //filters.push("drop-shadow(0px 0px 1pt rgba(127, 127, 127, "+(invert?0.90:0)+"))")
   filters.push("invert("+(invert?1:0)+")");
   filters.push("hue-rotate("+(invert?180:0)+"deg)"); // compensate color change // todo: reflect about this
   filters.push("contrast("+(invert?0.95:1)+")");
@@ -582,14 +582,14 @@ function getInvertStyle(invert){
   //exclFilters.push("drop-shadow(0px,0px, 4px, rgba(0,0,0, 1))");
   
   //exclFilters.push("drop-shadow(0px 0px 1px rgba(0,0,0,1))");
-  exclFilters.push("drop-shadow(0px 0px 2px rgba(127,127,127,0.5))");
+  //exclFilters.push("drop-shadow(0px 0px 2px rgba(127,127,127,0.5))");
   
   let strExclFilters = exclFilters.join(" ");
 
   filters.splice(3);
   //filters.push("blur(2px)");
   filters.push("contrast(1.05)");
-  filters.push("drop-shadow(0px 0px 1px rgba(127,127,127,0.9))");
+  //filters.push("drop-shadow(0px 0px 1px rgba(127,127,127,0.9))");
   let strExclBackFilter = invert ? filters.join(" ") : '';
 
   let curExclude = [...exclude];
@@ -604,8 +604,8 @@ function getInvertStyle(invert){
   
   let style = `
     html { 
-      -webkit-filter: `+strFilters +`;
-      transition: -webkit-filter 0.3s;
+      filter: `+strFilters +`;
+      transition: filter 0.3s;
     }
   `; 
     
@@ -616,14 +616,14 @@ function getInvertStyle(invert){
     } 
     
     body {
-      -webkit-text-stroke: 0.25pt rgba(127,127,127,0.25);
+      text-stroke: 0.25pt rgba(127,127,127,0.25);
       text-shadow: 0px 0px 0.5px rgba(0, 0, 0, 1), 0px 0px 1px rgba(127, 127, 127, 0.75);
     } 
     
     a, button { 
       box-shadow: 0px 0px 10px rgba(127, 127, 127, 0.01);
 
-      -webkit-text-stroke: 0.25pt rgba(127,127,127.25);
+      text-stroke: 0.25pt rgba(127,127,127.25);
       text-shadow: 0px 0px 0.5px rgba(127,127,127, 0.95), 0px 0px 1px rgba(127, 127, 127, 0.5);
       
       border-radius: 5px;
@@ -639,8 +639,8 @@ function getInvertStyle(invert){
     +curExclude.join(', ')+` {
       /*backdrop-filter: `+ strExclBackFilter +`;*/
 
-      -webkit-filter: `+ strExclFilters  +` !important;
-      -webkit-text-stroke: 0.25pt rgba(127,127,127,0.25) !important;
+      filter: `+ strExclFilters  +` !important;
+      text-stroke: 0.25pt rgba(127,127,127,0.25) !important;
 
       backdrop-filter: invert(0%);
 
@@ -650,7 +650,7 @@ function getInvertStyle(invert){
     /* Normalize an inverted image when mouse is over it */
     `+curExcludeHover.join(', ')+` {
       transition-duration: 0.3s;
-      -webkit-filter: `+ strExclBackFilter  +` !important; 
+      filter: `+ strExclBackFilter  +` !important; 
     }
 
     img{
