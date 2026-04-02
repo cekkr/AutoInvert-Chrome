@@ -1,21 +1,22 @@
-html:not([aiLoaded]){
+html:root:not([aiLoaded]) {
     background-color: black;
 }
 
-body:not([aiLoaded]){
+:root:not([aiLoaded]) > body {
     opacity: 0.4;
 }
 
-html:is([aiLoaded]){    
+html:root[aiLoaded] {    
     transition: background-color 0.6s, filter 0.4s;    
-    /*color: black;*/
 }
 
-body:is([aiLoaded]){
+:root[aiLoaded] > body {
+    opacity: 1; /* Assicurati di riportarlo a 1 */
     transition: opacity 0.2s;
 }
 
-html, body{
+html:root, 
+:root > body {
     transition-timing-function: ease;
     transition-duration: 0.3s;    
 }
